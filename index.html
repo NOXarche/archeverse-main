@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Main Page</title>
+    <title>Archeverse | Digital Innovation Hub</title>
     <link rel="stylesheet" href="mainpage.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +14,15 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-sphere sphere-1"></div>
+        <div class="gradient-sphere sphere-2"></div>
+        <div class="gradient-sphere sphere-3"></div>
+        <div class="particles-container"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
     <!-- Theme Toggle -->
     <div class="theme-toggle">
         <button id="theme-toggle-btn">
@@ -22,29 +31,42 @@
         </button>
     </div>
 
-    <!-- Header Section -->
+    <!-- Header Section with Parallax -->
     <header class="hero-section">
+        <div class="parallax-container">
+            <div class="parallax-layer layer-1" data-speed="0.2"></div>
+            <div class="parallax-layer layer-2" data-speed="0.4"></div>
+            <div class="parallax-layer layer-3" data-speed="0.6"></div>
+            <div class="parallax-layer layer-4" data-speed="0.8"></div>
+        </div>
         <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title">
+                <div class="logo-reveal">
+                    <div class="logo-container">
+                        <svg class="logo-svg" width="80" height="80" viewBox="0 0 80 80">
+                            <path class="logo-path" d="M40,5 L75,30 L75,70 L40,95 L5,70 L5,30 L40,5 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+                            <path class="logo-path-inner" d="M40,15 L65,35 L65,65 L40,85 L15,65 L15,35 L40,15 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+                            <path class="logo-path-center" d="M40,25 L55,40 L55,60 L40,75 L25,60 L25,40 L40,25 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+                        </svg>
+                    </div>
+                    <h1 class="brand-name">Archeverse</h1>
+                </div>
+                <h2 class="hero-subtitle">
                     <span id="typing-text"></span>
                     <span class="cursor">|</span>
-                </h1>
+                </h2>
                 <div class="live-status">
                     <span class="status-dot"></span>
                     <p>Currently working on: <span id="current-project">AI-Powered Robotics Platform</span></p>
                 </div>
                 <div class="hero-cta">
-                    <a href="#projects" class="primary-btn">View Projects</a>
-                    <a href="#contact" class="secondary-btn">Contact Me</a>
+                    <a href="#projects" class="primary-btn">Explore Projects</a>
+                    <a href="#contact" class="secondary-btn">Connect</a>
                 </div>
                 <div class="visitor-counter">
                     <p>You're visitor #<span id="visitor-count">1,024</span></p>
                 </div>
             </div>
-        </div>
-        <div class="hero-bg">
-            <div class="particles"></div>
         </div>
     </header>
 
@@ -53,7 +75,7 @@
         <div class="container">
             <div class="nav-content">
                 <div class="logo">
-                    <a href="#"><span class="highlight">Port</span>folio</a>
+                    <a href="#"><span class="highlight">Arche</span>verse</a>
                 </div>
                 <div class="nav-links" id="nav-links">
                     <a href="#projects" class="nav-link"><i class="fas fa-rocket"></i> Projects</a>
@@ -71,87 +93,111 @@
         </div>
     </nav>
 
-    <!-- Projects Section -->
+    <!-- Projects Section with Flip Cards -->
     <section id="projects" class="projects-section">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2>Live Projects</h2>
-                <p>Explore my latest work and ongoing projects</p>
+                <h2>Featured Projects</h2>
+                <p>Explore my latest innovations and creations</p>
             </div>
             <div class="projects-grid">
-                <!-- Project Card 1 -->
-                <div class="project-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="project-img">
-                        <img src="https://via.placeholder.com/600x400" alt="Project 1">
-                        <div class="live-badge">
-                            <span class="live-dot"></span>
-                            LIVE
+                <!-- Project Card 1 - Flip Card -->
+                <div class="flip-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="https://via.placeholder.com/600x400" alt="Project 1">
+                            <div class="live-badge">
+                                <span class="live-dot"></span>
+                                LIVE
+                            </div>
+                            <div class="flip-card-title">
+                                <h3>Autonomous Drone Navigation</h3>
+                                <p class="flip-hint">Click to flip</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="project-content">
-                        <h3>Autonomous Drone Navigation</h3>
-                        <p>AI-powered drone that navigates complex environments using computer vision.</p>
-                        <div class="tech-stack">
-                            <span>Python</span>
-                            <span>TensorFlow</span>
-                            <span>ROS</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="project-btn">View Details</a>
-                            <a href="#" class="github-link"><i class="fab fa-github"></i></a>
-                        </div>
-                        <div class="last-updated">
-                            <small>Last updated: <span class="update-time">2 hours ago</span></small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project Card 2 -->
-                <div class="project-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="project-img">
-                        <img src="https://via.placeholder.com/600x400" alt="Project 2">
-                    </div>
-                    <div class="project-content">
-                        <h3>Structural Analysis Dashboard</h3>
-                        <p>Interactive dashboard for civil engineers to analyze structural integrity in real-time.</p>
-                        <div class="tech-stack">
-                            <span>React</span>
-                            <span>Three.js</span>
-                            <span>Firebase</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="project-btn">View Details</a>
-                            <a href="#" class="github-link"><i class="fab fa-github"></i></a>
-                        </div>
-                        <div class="last-updated">
-                            <small>Last updated: <span class="update-time">3 days ago</span></small>
+                        <div class="flip-card-back">
+                            <div class="flip-card-content">
+                                <h3>Autonomous Drone Navigation</h3>
+                                <p>AI-powered drone that navigates complex environments using computer vision and machine learning algorithms.</p>
+                                <div class="tech-stack">
+                                    <span>Python</span>
+                                    <span>TensorFlow</span>
+                                    <span>ROS</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="#" class="project-btn">View Details</a>
+                                    <a href="#" class="github-link"><i class="fab fa-github"></i></a>
+                                </div>
+                                <div class="last-updated">
+                                    <small>Last updated: <span class="update-time">2 hours ago</span></small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Project Card 3 -->
-                <div class="project-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="project-img">
-                        <img src="https://via.placeholder.com/600x400" alt="Project 3">
-                        <div class="live-badge">
-                            <span class="live-dot"></span>
-                            LIVE
+                <!-- Project Card 2 - Flip Card -->
+                <div class="flip-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="https://via.placeholder.com/600x400" alt="Project 2">
+                            <div class="flip-card-title">
+                                <h3>Structural Analysis Dashboard</h3>
+                                <p class="flip-hint">Click to flip</p>
+                            </div>
+                        </div>
+                        <div class="flip-card-back">
+                            <div class="flip-card-content">
+                                <h3>Structural Analysis Dashboard</h3>
+                                <p>Interactive dashboard for civil engineers to analyze structural integrity in real-time with 3D visualizations.</p>
+                                <div class="tech-stack">
+                                    <span>React</span>
+                                    <span>Three.js</span>
+                                    <span>Firebase</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="#" class="project-btn">View Details</a>
+                                    <a href="#" class="github-link"><i class="fab fa-github"></i></a>
+                                </div>
+                                <div class="last-updated">
+                                    <small>Last updated: <span class="update-time">3 days ago</span></small>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="project-content">
-                        <h3>ML-Powered Traffic Analysis</h3>
-                        <p>Machine learning system that predicts traffic patterns for urban planning.</p>
-                        <div class="tech-stack">
-                            <span>Python</span>
-                            <span>Scikit-learn</span>
-                            <span>D3.js</span>
+                </div>
+
+                <!-- Project Card 3 - Flip Card -->
+                <div class="flip-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="https://via.placeholder.com/600x400" alt="Project 3">
+                            <div class="live-badge">
+                                <span class="live-dot"></span>
+                                LIVE
+                            </div>
+                            <div class="flip-card-title">
+                                <h3>ML-Powered Traffic Analysis</h3>
+                                <p class="flip-hint">Click to flip</p>
+                            </div>
                         </div>
-                        <div class="project-links">
-                            <a href="#" class="project-btn">View Details</a>
-                            <a href="#" class="github-link"><i class="fab fa-github"></i></a>
-                        </div>
-                        <div class="last-updated">
-                            <small>Last updated: <span class="update-time">1 week ago</span></small>
+                        <div class="flip-card-back">
+                            <div class="flip-card-content">
+                                <h3>ML-Powered Traffic Analysis</h3>
+                                <p>Machine learning system that predicts traffic patterns for urban planning with real-time data visualization.</p>
+                                <div class="tech-stack">
+                                    <span>Python</span>
+                                    <span>Scikit-learn</span>
+                                    <span>D3.js</span>
+                                </div>
+                                <div class="project-links">
+                                    <a href="#" class="project-btn">View Details</a>
+                                    <a href="#" class="github-link"><i class="fab fa-github"></i></a>
+                                </div>
+                                <div class="last-updated">
+                                    <small>Last updated: <span class="update-time">1 week ago</span></small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -162,8 +208,27 @@
         </div>
     </section>
 
-    <!-- Skills Section -->
+    <!-- 3D Model Showcase -->
+    <section class="model-showcase">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>3D Innovation</h2>
+                <p>Interactive 3D models showcasing technical expertise</p>
+            </div>
+            <div class="model-container" data-aos="fade-up">
+                <div class="model-canvas" id="model-canvas"></div>
+                <div class="model-controls">
+                    <button class="model-btn" id="rotate-model"><i class="fas fa-sync"></i> Rotate</button>
+                    <button class="model-btn" id="zoom-model"><i class="fas fa-search-plus"></i> Zoom</button>
+                    <button class="model-btn" id="reset-model"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section with Parallax -->
     <section id="skills" class="skills-section">
+        <div class="parallax-skills" data-speed="0.5"></div>
         <div class="container">
             <div class="section-header" data-aos="fade-up">
                 <h2>Skills & Expertise</h2>
@@ -267,14 +332,13 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- More skill cards can be added here -->
             </div>
         </div>
     </section>
 
-    <!-- Experience Timeline Section -->
+    <!-- Experience Timeline Section with Parallax -->
     <section id="experience" class="experience-section">
+        <div class="parallax-experience" data-speed="0.3"></div>
         <div class="container">
             <div class="section-header" data-aos="fade-up">
                 <h2>Experience & Education</h2>
@@ -344,8 +408,9 @@
         </div>
     </section>
 
-    <!-- Blog Section -->
+    <!-- Blog Section with Parallax -->
     <section id="blog" class="blog-section">
+        <div class="parallax-blog" data-speed="0.4"></div>
         <div class="container">
             <div class="section-header" data-aos="fade-up">
                 <h2>Latest Blog Posts</h2>
@@ -400,8 +465,9 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
+    <!-- Contact Section with Parallax -->
     <section id="contact" class="contact-section">
+        <div class="parallax-contact" data-speed="0.2"></div>
         <div class="container">
             <div class="section-header" data-aos="fade-up">
                 <h2>Let's Build Together</h2>
@@ -434,7 +500,7 @@
                         <i class="fas fa-envelope"></i>
                         <div>
                             <h3>Email</h3>
-                            <p>contact@yourportfolio.com</p>
+                            <p>contact@archeverse.com</p>
                         </div>
                     </div>
                     <div class="info-item">
@@ -467,7 +533,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
-                    <a href="#"><span class="highlight">Port</span>folio</a>
+                    <a href="#"><span class="highlight">Arche</span>verse</a>
                 </div>
                 <div class="footer-links">
                     <a href="#projects">Projects</a>
@@ -483,7 +549,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Your Portfolio. All rights reserved.</p>
+                <p>&copy; 2025 Archeverse. All rights reserved.</p>
                 <p>Built with <i class="fas fa-heart"></i> and a lot of <i class="fas fa-coffee"></i></p>
             </div>
         </div>
@@ -524,6 +590,7 @@
 
     <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
