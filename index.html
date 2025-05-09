@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Main Page</title>
+    <link rel="stylesheet" href="mainpage.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS for scroll animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="theme-toggle-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Header Section -->
+    <header class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span id="typing-text"></span>
+                    <span class="cursor">|</span>
+                </h1>
+                <div class="live-status">
+                    <span class="status-dot"></span>
+                    <p>Currently working on: <span id="current-project">AI-Powered Robotics Platform</span></p>
+                </div>
+                <div class="hero-cta">
+                    <a href="#projects" class="primary-btn">View Projects</a>
+                    <a href="#contact" class="secondary-btn">Contact Me</a>
+                </div>
+                <div class="visitor-counter">
+                    <p>You're visitor #<span id="visitor-count">1,024</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="hero-bg">
+            <div class="particles"></div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <a href="#"><span class="highlight">Port</span>folio</a>
+                </div>
+                <div class="nav-links" id="nav-links">
+                    <a href="#projects" class="nav-link"><i class="fas fa-rocket"></i> Projects</a>
+                    <a href="#skills" class="nav-link"><i class="fas fa-tools"></i> Skills</a>
+                    <a href="#experience" class="nav-link"><i class="fas fa-briefcase"></i> Experience</a>
+                    <a href="#blog" class="nav-link"><i class="fas fa-pen"></i> Blog</a>
+                    <button class="login-btn" id="login-btn"><i class="fas fa-lock"></i> VIP Login</button>
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Live Projects</h2>
+                <p>Explore my latest work and ongoing projects</p>
+            </div>
+            <div class="projects-grid">
+                <!-- Project Card 1 -->
+                <div class="project-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="project-img">
+                        <img src="https://via.placeholder.com/600x400" alt="Project 1">
+                        <div class="live-badge">
+                            <span class="live-dot"></span>
+                            LIVE
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3>Autonomous Drone Navigation</h3>
+                        <p>AI-powered drone that navigates complex environments using computer vision.</p>
+                        <div class="tech-stack">
+                            <span>Python</span>
+                            <span>TensorFlow</span>
+                            <span>ROS</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-btn">View Details</a>
+                            <a href="#" class="github-link"><i class="fab fa-github"></i></a>
+                        </div>
+                        <div class="last-updated">
+                            <small>Last updated: <span class="update-time">2 hours ago</span></small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div class="project-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="project-img">
+                        <img src="https://via.placeholder.com/600x400" alt="Project 2">
+                    </div>
+                    <div class="project-content">
+                        <h3>Structural Analysis Dashboard</h3>
+                        <p>Interactive dashboard for civil engineers to analyze structural integrity in real-time.</p>
+                        <div class="tech-stack">
+                            <span>React</span>
+                            <span>Three.js</span>
+                            <span>Firebase</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-btn">View Details</a>
+                            <a href="#" class="github-link"><i class="fab fa-github"></i></a>
+                        </div>
+                        <div class="last-updated">
+                            <small>Last updated: <span class="update-time">3 days ago</span></small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Card 3 -->
+                <div class="project-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="project-img">
+                        <img src="https://via.placeholder.com/600x400" alt="Project 3">
+                        <div class="live-badge">
+                            <span class="live-dot"></span>
+                            LIVE
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <h3>ML-Powered Traffic Analysis</h3>
+                        <p>Machine learning system that predicts traffic patterns for urban planning.</p>
+                        <div class="tech-stack">
+                            <span>Python</span>
+                            <span>Scikit-learn</span>
+                            <span>D3.js</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-btn">View Details</a>
+                            <a href="#" class="github-link"><i class="fab fa-github"></i></a>
+                        </div>
+                        <div class="last-updated">
+                            <small>Last updated: <span class="update-time">1 week ago</span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="view-all-container" data-aos="fade-up">
+                <a href="#" class="view-all-btn">View All Projects <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Skills & Expertise</h2>
+                <p>Specialized in multiple domains with cross-disciplinary expertise</p>
+            </div>
+            <div class="skills-filter" data-aos="fade-up">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="engineering">Engineering</button>
+                <button class="filter-btn" data-filter="data-science">Data Science</button>
+                <button class="filter-btn" data-filter="robotics">Robotics</button>
+            </div>
+            <div class="skills-grid">
+                <!-- Skill Card 1 -->
+                <div class="skill-card" data-category="engineering data-science" data-aos="fade-up" data-aos-delay="100">
+                    <div class="skill-card-inner">
+                        <div class="skill-card-front">
+                            <div class="skill-icon">
+                                <i class="fab fa-python"></i>
+                            </div>
+                            <h3>Python</h3>
+                        </div>
+                        <div class="skill-card-back">
+                            <div class="skill-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <p>Built 10+ ML models and automation systems</p>
+                            <div class="experience-years">5+ years</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill Card 2 -->
+                <div class="skill-card" data-category="engineering" data-aos="fade-up" data-aos-delay="200">
+                    <div class="skill-card-inner">
+                        <div class="skill-card-front">
+                            <div class="skill-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <h3>Structural Analysis</h3>
+                        </div>
+                        <div class="skill-card-back">
+                            <div class="skill-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <p>Designed 5 major building structures</p>
+                            <div class="experience-years">4+ years</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill Card 3 -->
+                <div class="skill-card" data-category="data-science" data-aos="fade-up" data-aos-delay="300">
+                    <div class="skill-card-inner">
+                        <div class="skill-card-front">
+                            <div class="skill-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3>Machine Learning</h3>
+                        </div>
+                        <div class="skill-card-back">
+                            <div class="skill-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <p>Developed predictive models with 90%+ accuracy</p>
+                            <div class="experience-years">3+ years</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill Card 4 -->
+                <div class="skill-card" data-category="robotics" data-aos="fade-up" data-aos-delay="400">
+                    <div class="skill-card-inner">
+                        <div class="skill-card-front">
+                            <div class="skill-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3>ROS</h3>
+                        </div>
+                        <div class="skill-card-back">
+                            <div class="skill-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                            <p>Built 3 autonomous robot prototypes</p>
+                            <div class="experience-years">2+ years</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- More skill cards can be added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Timeline Section -->
+    <section id="experience" class="experience-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Experience & Education</h2>
+                <p>My professional journey and academic background</p>
+            </div>
+            <div class="timeline">
+                <!-- Timeline Item 1 -->
+                <div class="timeline-item" data-aos="fade-right">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">2022 - Present</div>
+                        <h3>Senior Data Scientist</h3>
+                        <h4>TechInnovate Inc.</h4>
+                        <p>Leading a team of 5 data scientists in developing predictive models for urban infrastructure planning. Implemented ML solutions that improved efficiency by 35%.</p>
+                        <div class="timeline-tags">
+                            <span>Machine Learning</span>
+                            <span>Team Leadership</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 2 -->
+                <div class="timeline-item" data-aos="fade-left">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">2020 - 2022</div>
+                        <h3>Structural Engineer</h3>
+                        <h4>BuildWell Engineering</h4>
+                        <p>Designed and analyzed structural components for commercial buildings. Developed automated tools that reduced design time by 25%.</p>
+                        <div class="timeline-tags">
+                            <span>Structural Analysis</span>
+                            <span>AutoCAD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 3 -->
+                <div class="timeline-item" data-aos="fade-right">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">2019 - 2020</div>
+                        <h3>MSc in Data Science</h3>
+                        <h4>Tech University</h4>
+                        <p>Graduated with distinction. Thesis on "Machine Learning Applications in Structural Engineering" received academic excellence award.</p>
+                        <div class="timeline-tags">
+                            <span>Academic Research</span>
+                            <span>Data Analysis</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 4 -->
+                <div class="timeline-item" data-aos="fade-left">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">2015 - 2019</div>
+                        <h3>BSc in Civil Engineering</h3>
+                        <h4>Engineering Institute</h4>
+                        <p>Graduated summa cum laude. Led the university robotics team to national championship.</p>
+                        <div class="timeline-tags">
+                            <span>Engineering Fundamentals</span>
+                            <span>Robotics Team</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="blog-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Latest Blog Posts</h2>
+                <p>Thoughts, tutorials, and insights from my experience</p>
+            </div>
+            <div class="blog-grid">
+                <!-- Blog Card 1 -->
+                <div class="blog-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="blog-img">
+                        <img src="https://via.placeholder.com/600x400" alt="Blog 1">
+                        <div class="blog-category">Robotics</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date">May 5, 2025</div>
+                        <h3>Building Autonomous Robots with ROS and TensorFlow</h3>
+                        <p>A comprehensive guide to integrating machine learning models with robotic operating systems.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <!-- Blog Card 2 -->
+                <div class="blog-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="blog-img">
+                        <img src="https://via.placeholder.com/600x400" alt="Blog 2">
+                        <div class="blog-category">Data Science</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date">April 22, 2025</div>
+                        <h3>Predictive Modeling for Urban Infrastructure</h3>
+                        <p>How data science is revolutionizing the way we design and maintain city infrastructure.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <!-- Blog Card 3 -->
+                <div class="blog-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="blog-img">
+                        <img src="https://via.placeholder.com/600x400" alt="Blog 3">
+                        <div class="blog-category">Engineering</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date">April 10, 2025</div>
+                        <h3>From Civil Engineer to Data Scientist: My Journey</h3>
+                        <p>Personal insights and lessons learned during my transition between fields.</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="view-all-container" data-aos="fade-up">
+                <a href="#" class="view-all-btn">View All Posts <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Let's Build Together</h2>
+                <p>Have a project in mind or want to collaborate?</p>
+            </div>
+            <div class="contact-container">
+                <div class="contact-form" data-aos="fade-right">
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Send Message <i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+                <div class="contact-info" data-aos="fade-left">
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>Email</h3>
+                            <p>contact@yourportfolio.com</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>Location</h3>
+                            <p>San Francisco, CA</p>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-kaggle"></i></a>
+                    </div>
+                    <div class="newsletter">
+                        <h3>Subscribe to Newsletter</h3>
+                        <div class="newsletter-form">
+                            <input type="email" placeholder="Your email address">
+                            <button type="submit"><i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <a href="#"><span class="highlight">Port</span>folio</a>
+                </div>
+                <div class="footer-links">
+                    <a href="#projects">Projects</a>
+                    <a href="#skills">Skills</a>
+                    <a href="#experience">Experience</a>
+                    <a href="#blog">Blog</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Your Portfolio. All rights reserved.</p>
+                <p>Built with <i class="fas fa-heart"></i> and a lot of <i class="fas fa-coffee"></i></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>VIP Access</h2>
+            <p>Sign in to access exclusive content and features.</p>
+            <div class="login-options">
+                <button class="login-option google-login">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>
+                <button class="login-option github-login">
+                    <i class="fab fa-github"></i> Sign in with GitHub
+                </button>
+            </div>
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" name="login-email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="login-password">
+                </div>
+                <button type="submit" class="login-submit">Sign In</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+    <script src="mainpage.js"></script>
+</body>
+</html>
