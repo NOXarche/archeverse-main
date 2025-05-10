@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to My Portfolio</title>
+    <link rel="stylesheet" href="landing.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-sphere sphere-1"></div>
+        <div class="gradient-sphere sphere-2"></div>
+        <div class="gradient-sphere sphere-3"></div>
+        <div class="particles-container"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="landing-container">
+        <div class="landing-content">
+            <!-- Logo and Name -->
+            <div class="logo-reveal">
+                <div class="logo-container">
+                    <svg class="logo-svg" width="80" height="80" viewBox="0 0 80 80">
+                        <path class="logo-path" d="M40,5 L75,30 L75,70 L40,95 L5,70 L5,30 L40,5 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+                        <path class="logo-path-inner" d="M40,15 L65,35 L65,65 L40,85 L15,65 L15,35 L40,15 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+                        <path class="logo-path-center" d="M40,25 L55,40 L55,60 L40,75 L25,60 L25,40 L40,25 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+                    </svg>
+                </div>
+                <h1 class="brand-name">Your Name</h1>
+            </div>
+
+            <!-- Animated Typing Effect -->
+            <h2 class="hero-title">
+                <span id="typing-text"></span>
+                <span class="cursor">|</span>
+            </h2>
+
+            <!-- Brief Introduction -->
+            <div class="intro-text">
+                <p>Welcome to my digital portfolio. I craft innovative solutions at the intersection of engineering and data science.</p>
+            </div>
+
+            <!-- Skills Preview -->
+            <div class="skills-preview">
+                <div class="skill-icon"><i class="fab fa-python"></i></div>
+                <div class="skill-icon"><i class="fas fa-brain"></i></div>
+                <div class="skill-icon"><i class="fas fa-robot"></i></div>
+                <div class="skill-icon"><i class="fas fa-code"></i></div>
+                <div class="skill-icon"><i class="fas fa-database"></i></div>
+            </div>
+
+            <!-- CTA Button -->
+            <div class="cta-container">
+                <a href="mainpage.html" class="cta-button">
+                    <span>Explore My Portfolio</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Stats Counter -->
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-number" id="projects-count">15+</span>
+                    <span class="stat-label">Projects</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="experience-count">5+</span>
+                    <span class="stat-label">Years Experience</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="clients-count">20+</span>
+                    <span class="stat-label">Happy Clients</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="landing.js"></script>
+</body>
+</html>
