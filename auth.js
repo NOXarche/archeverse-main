@@ -24,6 +24,7 @@ function initFirebase() {
     const firebaseConfig = {
         apiKey: "AIzaSyDQ0LKF-yCoo5k1gl_ntt8r-9tR4QBZGyE",
         authDomain: "archeverse-7d502.firebaseapp.com",
+        databaseURL: "https://archeverse-7d502-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "archeverse-7d502",
         storageBucket: "archeverse-7d502.firebasestorage.app",
         messagingSenderId: "489295358544",
@@ -40,19 +41,36 @@ function initFirebase() {
             // User is signed in
             console.log("User is signed in:", user.email);
             
-            // Check if user has admin role (custom claims)
-            user.getIdTokenResult().then((idTokenResult) => {
-                if (idTokenResult.claims.admin) {
-                    console.log("User has admin role");
-                }
-            });
-            
-            // If on auth page, redirect to main page
-            if (window.location.pathname.includes('auth.html')) {
-                showSuccessModal('Successfully Signed In', 'Redirecting you to the main page...', function() {
-                    window.location.href = 'mainpage.html';
+            // Check if user has admin role from Firestore
+            firebase.firestore().collection('users').doc(user.uid).get()
+                .then((doc) => {
+                    if (doc.exists && doc.data().isAdmin === true) {
+                        console.log("User has admin role");
+                        
+                        // If on auth page, redirect admin to lounge.html
+                        if (window.location.pathname.includes('auth.html')) {
+                            showSuccessModal('Admin Access Granted', 'Redirecting you to the admin lounge...', function() {
+                                window.location.href = 'lounge.html';
+                            });
+                        }
+                    } else {
+                        // Regular user - redirect to mainpage.html
+                        if (window.location.pathname.includes('auth.html')) {
+                            showSuccessModal('Successfully Signed In', 'Redirecting you to the main page...', function() {
+                                window.location.href = 'mainpage.html';
+                            });
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error checking admin status:", error);
+                    // Default to regular user access on error
+                    if (window.location.pathname.includes('auth.html')) {
+                        showSuccessModal('Successfully Signed In', 'Redirecting you to the main page...', function() {
+                            window.location.href = 'mainpage.html';
+                        });
+                    }
                 });
-            }
         } else {
             // User is signed out
             console.log("User is signed out");
