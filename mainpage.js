@@ -248,21 +248,22 @@ function initLoginModal() {
     const closeModal = document.querySelector('.close-modal');
     
     loginBtn.addEventListener('click', function() {
-        loginModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+        window.location.href = 'auth.html';
     });
     
-    closeModal.addEventListener('click', function() {
-        loginModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    });
-    
-    window.addEventListener('click', function(event) {
-        if (event.target === loginModal) {
+    if (closeModal) {
+        closeModal.addEventListener('click', function() {
             loginModal.style.display = 'none';
             document.body.style.overflow = 'auto';
-        }
-    });
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target === loginModal) {
+                loginModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
 }
 
 // Animated Background with Particles
@@ -325,7 +326,6 @@ function initAnimatedBackground() {
         spheres.forEach((sphere, index) => {
             const offsetX = (mouseX - 0.5) * (index + 1) * 10;
             const offsetY = (mouseY - 0.5) * (index + 1) * 10;
-            
             sphere.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
         });
     });
@@ -595,14 +595,15 @@ function initKonamiCode() {
 
 // Firebase initialization
 function initFirebase() {
-    // Replace with your Firebase config
+    // Firebase configuration
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyDQ0LKF-yCoo5k1gl_ntt8r-9tR4QBZGyE",
+        authDomain: "archeverse-7d502.firebaseapp.com",
+        projectId: "archeverse-7d502",
+        storageBucket: "archeverse-7d502.firebasestorage.app",
+        messagingSenderId: "489295358544",
+        appId: "1:489295358544:web:2f3a2cb2a74c5343f17f55",
+        measurementId: "G-G2QJ69V5DN"
     };
     
     // Initialize Firebase
