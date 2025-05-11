@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initAnimatedBackground();
     init3DModel();
     initAIAssistant();
+    initResponsiveOptimizations();
+    initDesignFilter();
     
     // Firebase initialization
     initFirebase();
@@ -64,7 +66,9 @@ function initTypingEffect() {
         'Civil Engineer',
         'Data Scientist',
         'Robotics Builder',
-        'AI Specialist'
+        'AI Specialist',
+        'Graphics Designer',
+        'UI/UX Developer'
     ];
     
     let phraseIndex = 0;
@@ -500,16 +504,16 @@ function init3DModel() {
     ];
     
     // Create nested hexagonal prisms
-    const outerPrism = new THREE.Mesh(geometry, materials[0]);
+    let outerPrism = new THREE.Mesh(geometry, materials[0]);
     scene.add(outerPrism);
     
-    const middlePrism = new THREE.Mesh(
+    let middlePrism = new THREE.Mesh(
         new THREE.CylinderGeometry(0.8, 0.8, 2.2, segmentCount),
         materials[1]
     );
     scene.add(middlePrism);
     
-    const innerPrism = new THREE.Mesh(
+    let innerPrism = new THREE.Mesh(
         new THREE.CylinderGeometry(0.5, 0.5, 2.5, segmentCount),
         materials[2]
     );
@@ -760,6 +764,210 @@ function initAIAssistant() {
     }
 }
 
+// Mobile and tablet optimizations
+function initResponsiveOptimizations() {
+    const isMobile = window.innerWidth < 768;
+    const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
+    
+    // Adjust layout based on device
+    if (isMobile || isTablet) {
+        // Reduce animation complexity
+        document.body.classList.add('reduce-motion');
+        
+        // Optimize images
+        optimizeImages();
+        
+        // Adjust grid layouts
+        adjustGridLayouts();
+    }
+    
+    // Listen for orientation changes
+    window.addEventListener('orientationchange', function() {
+        setTimeout(() => {
+            adjustGridLayouts();
+        }, 300);
+    });
+    
+    // Add touch-friendly interactions
+    if ('ontouchstart' in window) {
+        addTouchInteractions();
+    }
+}
+
+function optimizeImages() {
+    // Replace large images with smaller versions on mobile
+    const images = document.querySelectorAll('img:not([data-no-optimize])');
+    
+    images.forEach(img => {
+        // Add loading="lazy" for better performance
+        img.setAttribute('loading', 'lazy');
+        
+        // Replace high-res images with lower-res versions
+        if (img.src.includes('placeholder')) {
+            const width = window.innerWidth < 768 ? 400 : 600;
+            const height = window.innerWidth < 768 ? 300 : 400;
+            img.src = img.src.replace(/\d+x\d+/, `${width}x${height}`);
+        }
+        
+        // Add error handling
+        img.onerror = function() {
+            this.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+        };
+    });
+}
+
+function adjustGridLayouts() {
+    // Adjust grid layouts for better mobile display
+    const grids = document.querySelectorAll('.projects-grid, .skills-grid, .blog-grid, .design-showcase-grid');
+    
+    grids.forEach(grid => {
+        if (window.innerWidth < 768) {
+            grid.style.gridTemplateColumns = '1fr';
+        } else if (window.innerWidth < 1024) {
+            grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+        } else {
+            grid.style.gridTemplateColumns = '';  // Reset to CSS default
+        }
+    });
+    
+    // Adjust contact container for mobile
+    const contactContainer = document.querySelector('.contact-container');
+    if (contactContainer) {
+        if (window.innerWidth < 1024) {
+            contactContainer.style.gridTemplateColumns = '1fr';
+        } else {
+            contactContainer.style.gridTemplateColumns = '';
+        }
+    }
+}
+
+function addTouchInteractions() {
+    // Add active states for touch interactions
+    const interactiveElements = document.querySelectorAll('button, .btn, .nav-link, .card, .project-card, .blog-card');
+    
+    interactiveElements.forEach(element => {
+        element.addEventListener('touchstart', function() {
+            this.classList.add('touch-active');
+        }, { passive: true });
+        
+        element.addEventListener('touchend', function() {
+            this.classList.remove('touch-active');
+        }, { passive: true });
+    });
+    
+    // Improve touch targets
+    const smallButtons = document.querySelectorAll('.social-link, .github-link');
+    smallButtons.forEach(button => {
+        button.style.minHeight = '44px';
+        button.style.minWidth = '44px';
+    });
+}
+
+// Initialize design filter functionality
+function initDesignFilter() {
+    const filterButtons = document.querySelectorAll('.design-filter .filter-btn');
+    const designCards = document.querySelectorAll('.design-card');
+    
+    if (filterButtons.length === 0 || designCards.length === 0) return;
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filterValue = this.getAttribute('data-filter');
+            
+            // Filter design cards
+            designCards.forEach(card => {
+                if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                    card.style.display = 'block';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1)';
+                    }, 10);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 300);
+                }
+            });
+        });
+    });
+}
+
+// Initialize design viewer modal
+function initDesignViewer() {
+    const modal = document.getElementById('design-modal');
+    const modalImg = document.getElementById('design-modal-image');
+    const modalTitle = document.getElementById('design-modal-title');
+    const modalDesc = document.getElementById('design-modal-description');
+    const modalTools = document.getElementById('design-modal-tools');
+    const closeBtn = document.querySelector('.close-modal');
+    
+    if (!modal || !modalImg || !modalTitle || !modalDesc || !modalTools || !closeBtn) return;
+    
+    // Get all view buttons
+    const viewButtons = document.querySelectorAll('.view-design-btn');
+    
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const designId = this.getAttribute('data-id');
+            const designCard = this.closest('.design-card');
+            
+            // Get design details
+            const image = designCard.querySelector('.design-image').src;
+            const title = designCard.querySelector('.design-title').textContent;
+            const description = designCard.querySelector('.design-description').textContent;
+            const toolsElements = designCard.querySelectorAll('.design-tool');
+            
+            // Set modal content
+            modalImg.src = image;
+            modalTitle.textContent = title;
+            modalDesc.textContent = description;
+            
+            // Set tools
+            modalTools.innerHTML = '';
+            toolsElements.forEach(tool => {
+                const toolElement = document.createElement('span');
+                toolElement.className = 'design-tool';
+                toolElement.textContent = tool.textContent;
+                modalTools.appendChild(toolElement);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        });
+    });
+    
+    // Close modal
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Close modal with Escape key
+    window.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modal.style.display === 'block') {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+}
+
 // Firebase initialization with lazy loading
 function initFirebase() {
     // Firebase configuration
@@ -803,6 +1011,7 @@ function initFirebase() {
     createObserver('experience', loadExperience);
     createObserver('blog', loadBlogPosts);
     createObserver('linkedin', loadLinkedInPosts);
+    createObserver('design-showcase', loadDesignShowcase);
     
     // Setup real-time listeners for critical elements immediately
     setupRealTimeListeners();
@@ -948,79 +1157,86 @@ function loadProjects() {
     const database = firebase.database();
     const projectsRef = database.ref('projects');
     
-    projectsRef.on('value', (snapshot) => {
+    // Use get() for one-time data retrieval
+    projectsRef.get().then((snapshot) => {
         const projects = snapshot.val() || {};
         
         // Clear loading spinner
         projectsGrid.innerHTML = '';
         
-        // If no projects found, create demo projects
         if (Object.keys(projects).length === 0) {
-            const demoProjects = [
-                {
-                    title: "Autonomous Drone Navigation",
-                    description: "AI-powered drone that navigates complex environments using computer vision and machine learning algorithms.",
-                    imageUrl: "https://via.placeholder.com/600x400",
-                    technologies: ["Python", "TensorFlow", "ROS"],
-                    detailsUrl: "#",
-                    githubUrl: "#",
-                    status: "live",
-                    lastUpdated: Date.now() - 7200000 // 2 hours ago
-                },
-                {
-                    title: "Structural Analysis Dashboard",
-                    description: "Interactive dashboard for civil engineers to analyze structural integrity in real-time with 3D visualizations.",
-                    imageUrl: "https://via.placeholder.com/600x400",
-                    technologies: ["React", "Three.js", "Firebase"],
-                    detailsUrl: "#",
-                    githubUrl: "#",
-                    status: "development",
-                    lastUpdated: Date.now() - 259200000 // 3 days ago
-                },
-                {
-                    title: "ML-Powered Traffic Analysis",
-                    description: "Machine learning system that predicts traffic patterns for urban planning with real-time data visualization.",
-                    imageUrl: "https://via.placeholder.com/600x400",
-                    technologies: ["Python", "Scikit-learn", "D3.js"],
-                    detailsUrl: "#",
-                    githubUrl: "#",
-                    status: "live",
-                    lastUpdated: Date.now() - 604800000 // 1 week ago
-                }
-            ];
-            
-            // Display demo projects
-            displayProjects(demoProjects);
+            // Display demo projects if no data found
+            displayDemoProjects();
         } else {
             // Display projects from Firebase
             displayProjects(Object.values(projects));
         }
         
         // Update project count
-        const projectsCountElement = document.getElementById('projects-count');
-        if (projectsCountElement) {
-            const projectCount = Object.keys(projects).length || demoProjects.length;
-            projectsCountElement.textContent = projectCount;
-        }
+        updateProjectCount(Object.keys(projects).length);
+    }).catch(error => {
+        console.error("Error fetching projects:", error);
+        projectsGrid.innerHTML = '<p>Error loading projects. Please try again later.</p>';
     });
+    
+    function displayDemoProjects() {
+        const demoProjects = [
+            {
+                title: "Autonomous Drone Navigation",
+                description: "AI-powered drone that navigates complex environments using computer vision and machine learning algorithms.",
+                imageUrl: "https://via.placeholder.com/600x400",
+                technologies: ["Python", "TensorFlow", "ROS"],
+                detailsUrl: "#",
+                githubUrl: "#",
+                status: "live",
+                lastUpdated: Date.now() - 7200000 // 2 hours ago
+            },
+            {
+                title: "Structural Analysis Dashboard",
+                description: "Interactive dashboard for civil engineers to analyze structural integrity in real-time with 3D visualizations.",
+                imageUrl: "https://via.placeholder.com/600x400",
+                technologies: ["React", "Three.js", "Firebase"],
+                detailsUrl: "#",
+                githubUrl: "#",
+                status: "development",
+                lastUpdated: Date.now() - 259200000 // 3 days ago
+            },
+            {
+                title: "ML-Powered Traffic Analysis",
+                description: "Machine learning system that predicts traffic patterns for urban planning with real-time data visualization.",
+                imageUrl: "https://via.placeholder.com/600x400",
+                technologies: ["Python", "Scikit-learn", "D3.js"],
+                detailsUrl: "#",
+                githubUrl: "#",
+                status: "live",
+                lastUpdated: Date.now() - 604800000 // 1 week ago
+            }
+        ];
+        
+        displayProjects(demoProjects);
+        updateProjectCount(demoProjects.length);
+    }
     
     function displayProjects(projects) {
         // Create document fragment for better performance
         const fragment = document.createDocumentFragment();
         
+        // Sort projects by last updated date (newest first)
+        projects.sort((a, b) => b.lastUpdated - a.lastUpdated);
+        
         projects.forEach((project, index) => {
-            const isLive = project.status === 'live';
-            
             const projectCard = document.createElement('div');
             projectCard.className = 'project-card';
             projectCard.setAttribute('data-aos', 'fade-up');
-            projectCard.setAttribute('data-aos-delay', Math.min((index + 1) * 100, 500)); // Cap delay for better UX
+            projectCard.setAttribute('data-aos-delay', Math.min((index + 1) * 50, 300)); // Reduced delay for better UX
             
-            // Create project card HTML structure
+            // Optimize image loading with lazy loading and responsive image
+            const imageUrl = project.imageUrl || "https://via.placeholder.com/600x400";
+            
             projectCard.innerHTML = `
                 <div class="project-image-container">
-                    <img src="${project.imageUrl}" alt="${project.title}" class="project-image">
-                    ${isLive ? '<div class="live-badge"><span class="live-dot"></span>LIVE</div>' : ''}
+                    <img src="${imageUrl}" alt="${project.title}" class="project-image" loading="lazy">
+                    ${project.status === 'live' ? '<div class="live-badge"><span class="live-dot"></span>LIVE</div>' : ''}
                 </div>
                 <div class="project-content">
                     <h3 class="project-title">${project.title}</h3>
@@ -1041,8 +1257,14 @@ function loadProjects() {
             fragment.appendChild(projectCard);
         });
         
-        // Append all cards at once for better performance
         projectsGrid.appendChild(fragment);
+    }
+    
+    function updateProjectCount(count) {
+        const projectsCountElement = document.getElementById('projects-count');
+        if (projectsCountElement) {
+            animateCounter(projectsCountElement, count);
+        }
     }
 }
 
@@ -1062,56 +1284,84 @@ function loadSkills() {
     const database = firebase.database();
     const skillsRef = database.ref('skills');
     
-    skillsRef.on('value', (snapshot) => {
+    skillsRef.get().then((snapshot) => {
         const skills = snapshot.val() || {};
         
         // Clear loading spinner
         skillsGrid.innerHTML = '';
         
-        // If no skills found, create demo skills
         if (Object.keys(skills).length === 0) {
-            const demoSkills = [
-                {
-                    name: "Python",
-                    icon: "fab fa-python",
-                    rating: 5,
-                    description: "Built 10+ ML models and automation systems",
-                    experience: "5+ years",
-                    categories: ["engineering", "data-science"]
-                },
-                {
-                    name: "Structural Analysis",
-                    icon: "fas fa-building",
-                    rating: 4,
-                    description: "Designed 5 major building structures",
-                    experience: "4+ years",
-                    categories: ["engineering"]
-                },
-                {
-                    name: "Machine Learning",
-                    icon: "fas fa-brain",
-                    rating: 4,
-                    description: "Developed predictive models with 90%+ accuracy",
-                    experience: "3+ years",
-                    categories: ["data-science"]
-                },
-                {
-                    name: "ROS",
-                    icon: "fas fa-robot",
-                    rating: 3,
-                    description: "Built 3 autonomous robot prototypes",
-                    experience: "2+ years",
-                    categories: ["robotics"]
-                }
-            ];
-            
-            // Display demo skills
-            displaySkills(demoSkills);
+            displayDemoSkills();
         } else {
-            // Display skills from Firebase
             displaySkills(Object.values(skills));
         }
+    }).catch(error => {
+        console.error("Error fetching skills:", error);
+        skillsGrid.innerHTML = '<p>Error loading skills. Please try again later.</p>';
     });
+    
+    function displayDemoSkills() {
+        const demoSkills = [
+            {
+                name: "Python",
+                icon: "fab fa-python",
+                rating: 5,
+                description: "Built 10+ ML models and automation systems",
+                experience: "5+ years",
+                categories: ["engineering", "data-science"]
+            },
+            {
+                name: "Structural Analysis",
+                icon: "fas fa-building",
+                rating: 4,
+                description: "Designed 5 major building structures",
+                experience: "4+ years",
+                categories: ["engineering"]
+            },
+            {
+                name: "Machine Learning",
+                icon: "fas fa-brain",
+                rating: 4,
+                description: "Developed predictive models with 90%+ accuracy",
+                experience: "3+ years",
+                categories: ["data-science"]
+            },
+            {
+                name: "ROS",
+                icon: "fas fa-robot",
+                rating: 3,
+                description: "Built 3 autonomous robot prototypes",
+                experience: "2+ years",
+                categories: ["robotics"]
+            },
+            {
+                name: "Graphic Design",
+                icon: "fas fa-palette",
+                rating: 4,
+                description: "Created branding for 15+ companies",
+                experience: "4+ years",
+                categories: ["design"]
+            },
+            {
+                name: "UI/UX Design",
+                icon: "fas fa-desktop",
+                rating: 4,
+                description: "Designed user interfaces for web and mobile apps",
+                experience: "3+ years",
+                categories: ["design"]
+            },
+            {
+                name: "AutoCAD",
+                icon: "fas fa-drafting-compass",
+                rating: 5,
+                description: "Developed detailed technical drawings for construction",
+                experience: "5+ years",
+                categories: ["engineering", "design"]
+            }
+        ];
+        
+        displaySkills(demoSkills);
+    }
     
     function displaySkills(skills) {
         // Create document fragment for better performance
@@ -1122,7 +1372,7 @@ function loadSkills() {
             skillCard.className = 'skill-card';
             skillCard.setAttribute('data-category', skill.categories.join(' '));
             skillCard.setAttribute('data-aos', 'fade-up');
-            skillCard.setAttribute('data-aos-delay', Math.min((index + 1) * 100, 500)); // Cap delay for better UX
+            skillCard.setAttribute('data-aos-delay', Math.min((index + 1) * 50, 300)); // Reduced delay for better UX
             
             // Create skill card HTML structure
             skillCard.innerHTML = `
@@ -1142,7 +1392,6 @@ function loadSkills() {
             fragment.appendChild(skillCard);
         });
         
-        // Append all cards at once for better performance
         skillsGrid.appendChild(fragment);
     }
 }
@@ -1163,59 +1412,69 @@ function loadExperience() {
     const database = firebase.database();
     const experienceRef = database.ref('experience');
     
-    experienceRef.on('value', (snapshot) => {
+    experienceRef.get().then((snapshot) => {
         const experiences = snapshot.val() || {};
         
         // Clear loading spinner
         timeline.innerHTML = '';
         
-        // If no experiences found, create demo experiences
         if (Object.keys(experiences).length === 0) {
-            const demoExperiences = [
-                {
-                    period: "2022 - Present",
-                    title: "Senior Data Scientist",
-                    company: "TechInnovate Inc.",
-                    description: "Leading a team of 5 data scientists in developing predictive models for urban infrastructure planning. Implemented ML solutions that improved efficiency by 35%.",
-                    tags: ["Machine Learning", "Team Leadership"],
-                    type: "job"
-                },
-                {
-                    period: "2020 - 2022",
-                    title: "Structural Engineer",
-                    company: "BuildWell Engineering",
-                    description: "Designed and analyzed structural components for commercial buildings. Developed automated tools that reduced design time by 25%.",
-                    tags: ["Structural Analysis", "AutoCAD"],
-                    type: "job"
-                },
-                {
-                    period: "2019 - 2020",
-                    title: "MSc in Data Science",
-                    company: "Tech University",
-                    description: "Graduated with distinction. Thesis on \"Machine Learning Applications in Structural Engineering\" received academic excellence award.",
-                    tags: ["Academic Research", "Data Analysis"],
-                    type: "education"
-                },
-                {
-                    period: "2015 - 2019",
-                    title: "BSc in Civil Engineering",
-                    company: "Engineering Institute",
-                    description: "Graduated summa cum laude. Led the university robotics team to national championship.",
-                    tags: ["Engineering Fundamentals", "Robotics Team"],
-                    type: "education"
-                }
-            ];
-            
-            // Display demo experiences
-            displayExperiences(demoExperiences);
+            displayDemoExperiences();
         } else {
-            // Display experiences from Firebase
-            displayExperiences(Object.values(experiences));
+            // Sort experiences by start date (newest first)
+            const sortedExperiences = Object.values(experiences).sort((a, b) => {
+                const yearA = parseInt(a.period.match(/\d{4}/)[0]);
+                const yearB = parseInt(b.period.match(/\d{4}/)[0]);
+                return yearB - yearA;
+            });
+            
+            displayExperiences(sortedExperiences);
+            createTimelineYears(sortedExperiences);
         }
-        
-        // Create timeline years navigation
-        createTimelineYears(Object.values(experiences).length ? Object.values(experiences) : demoExperiences);
+    }).catch(error => {
+        console.error("Error fetching experience:", error);
+        timeline.innerHTML = '<p>Error loading experience data. Please try again later.</p>';
     });
+    
+    function displayDemoExperiences() {
+        const demoExperiences = [
+            {
+                period: "2022 - Present",
+                title: "Senior Data Scientist",
+                company: "TechInnovate Inc.",
+                description: "Leading a team of 5 data scientists in developing predictive models for urban infrastructure planning. Implemented ML solutions that improved efficiency by 35%.",
+                tags: ["Machine Learning", "Team Leadership"],
+                type: "job"
+            },
+            {
+                period: "2020 - 2022",
+                title: "Structural Engineer",
+                company: "BuildWell Engineering",
+                description: "Designed and analyzed structural components for commercial buildings. Developed automated tools that reduced design time by 25%.",
+                tags: ["Structural Analysis", "AutoCAD"],
+                type: "job"
+            },
+            {
+                period: "2019 - 2020",
+                title: "MSc in Data Science",
+                company: "Tech University",
+                description: "Graduated with distinction. Thesis on \"Machine Learning Applications in Structural Engineering\" received academic excellence award.",
+                tags: ["Academic Research", "Data Analysis"],
+                type: "education"
+            },
+            {
+                period: "2015 - 2019",
+                title: "BSc in Civil Engineering",
+                company: "Engineering Institute",
+                description: "Graduated summa cum laude. Led the university robotics team to national championship.",
+                tags: ["Engineering Fundamentals", "Robotics Team"],
+                type: "education"
+            }
+        ];
+        
+        displayExperiences(demoExperiences);
+        createTimelineYears(demoExperiences);
+    }
     
     function displayExperiences(experiences) {
         // Create document fragment for better performance
@@ -1244,7 +1503,6 @@ function loadExperience() {
             fragment.appendChild(timelineItem);
         });
         
-        // Append all items at once for better performance
         timeline.appendChild(fragment);
     }
     
@@ -1301,62 +1559,78 @@ function loadBlogPosts() {
     const database = firebase.database();
     const blogRef = database.ref('blogPosts');
     
-    blogRef.on('value', (snapshot) => {
+    blogRef.get().then((snapshot) => {
         const posts = snapshot.val() || {};
         
         // Clear loading spinner
         blogGrid.innerHTML = '';
         
-        // If no posts found, create demo posts
         if (Object.keys(posts).length === 0) {
-            const currentDate = new Date();
-            const demoPosts = [
-                {
-                    title: "Building Autonomous Robots with ROS and TensorFlow",
-                    excerpt: "A comprehensive guide to integrating machine learning models with robotic operating systems.",
-                    imageUrl: "https://via.placeholder.com/600x400",
-                    category: "Robotics",
-                    date: new Date(2025, 4, 5).getTime(), // May 5, 2025
-                    url: "#",
-                    readTime: "8 min read"
-                },
-                {
-                    title: "Predictive Modeling for Urban Infrastructure",
-                    excerpt: "How data science is revolutionizing the way we design and maintain city infrastructure.",
-                    imageUrl: "https://via.placeholder.com/600x400",
-                    category: "Data Science",
-                    date: new Date(2025, 3, 22).getTime(), // April 22, 2025
-                    url: "#",
-                    readTime: "6 min read"
-                },
-                {
-                    title: "From Civil Engineer to Data Scientist: My Journey",
-                    excerpt: "Personal insights and lessons learned during my transition between fields.",
-                    imageUrl: "https://via.placeholder.com/600x400",
-                    category: "Engineering",
-                    date: new Date(2025, 3, 10).getTime(), // April 10, 2025
-                    url: "#",
-                    readTime: "5 min read"
-                }
-            ];
-            
-            // Display demo posts
-            displayBlogPosts(demoPosts);
+            displayDemoBlogPosts();
         } else {
-            // Display posts from Firebase
             displayBlogPosts(Object.values(posts));
         }
+    }).catch(error => {
+        console.error("Error fetching blog posts:", error);
+        blogGrid.innerHTML = '<p>Error loading blog posts. Please try again later.</p>';
     });
+    
+    function displayDemoBlogPosts() {
+        const currentDate = new Date();
+        const demoPosts = [
+            {
+                title: "Building Autonomous Robots with ROS and TensorFlow",
+                excerpt: "A comprehensive guide to integrating machine learning models with robotic operating systems.",
+                imageUrl: "https://via.placeholder.com/600x400",
+                category: "Robotics",
+                date: new Date(2025, 4, 5).getTime(), // May 5, 2025
+                url: "#",
+                readTime: "8 min read"
+            },
+            {
+                title: "Predictive Modeling for Urban Infrastructure",
+                excerpt: "How data science is revolutionizing the way we design and maintain city infrastructure.",
+                imageUrl: "https://via.placeholder.com/600x400",
+                category: "Data Science",
+                date: new Date(2025, 3, 22).getTime(), // April 22, 2025
+                url: "#",
+                readTime: "6 min read"
+            },
+            {
+                title: "From Civil Engineer to Data Scientist: My Journey",
+                excerpt: "Personal insights and lessons learned during my transition between fields.",
+                imageUrl: "https://via.placeholder.com/600x400",
+                category: "Engineering",
+                date: new Date(2025, 3, 10).getTime(), // April 10, 2025
+                url: "#",
+                readTime: "5 min read"
+            },
+            {
+                title: "UI/UX Design Principles for Engineering Applications",
+                excerpt: "Creating intuitive interfaces for complex technical software.",
+                imageUrl: "https://via.placeholder.com/600x400",
+                category: "UI/UX Design",
+                date: new Date(2025, 3, 1).getTime(), // April 1, 2025
+                url: "#",
+                readTime: "7 min read"
+            }
+        ];
+        
+        displayBlogPosts(demoPosts);
+    }
     
     function displayBlogPosts(posts) {
         // Create document fragment for better performance
         const fragment = document.createDocumentFragment();
         
+        // Sort posts by date (newest first)
+        posts.sort((a, b) => b.date - a.date);
+        
         posts.forEach((post, index) => {
             const blogCard = document.createElement('div');
             blogCard.className = 'blog-card';
             blogCard.setAttribute('data-aos', 'fade-up');
-            blogCard.setAttribute('data-aos-delay', Math.min((index + 1) * 100, 500)); // Cap delay for better UX
+            blogCard.setAttribute('data-aos-delay', Math.min((index + 1) * 50, 300)); // Reduced delay for better UX
             
             // Format date
             const postDate = new Date(post.date);
@@ -1369,7 +1643,7 @@ function loadBlogPosts() {
             // Create blog card HTML structure
             blogCard.innerHTML = `
                 <div class="blog-img">
-                    <img src="${post.imageUrl}" alt="${post.title}">
+                    <img src="${post.imageUrl}" alt="${post.title}" loading="lazy">
                     <div class="blog-category">${post.category}</div>
                 </div>
                 <div class="blog-content">
@@ -1386,7 +1660,6 @@ function loadBlogPosts() {
             fragment.appendChild(blogCard);
         });
         
-        // Append all cards at once for better performance
         blogGrid.appendChild(fragment);
     }
 }
@@ -1407,7 +1680,7 @@ function loadLinkedInPosts() {
     const database = firebase.database();
     const linkedinRef = database.ref('linkedinPosts');
     
-    linkedinRef.on('value', (snapshot) => {
+    linkedinRef.get().then((snapshot) => {
         const posts = snapshot.val() || {};
         
         // Clear loading spinner
@@ -1442,6 +1715,9 @@ function loadLinkedInPosts() {
             // Load LinkedIn SDK if needed
             loadLinkedInSDK();
         }
+    }).catch(error => {
+        console.error("Error fetching LinkedIn posts:", error);
+        linkedinFeed.innerHTML = '<p>Error loading LinkedIn posts. Please try again later.</p>';
     });
     
     function loadLinkedInSDK() {
@@ -1566,16 +1842,338 @@ function formatTimeAgo(timestamp) {
     }
 }
 
+// Mobile and tablet optimizations
+function initResponsiveOptimizations() {
+    const isMobile = window.innerWidth < 768;
+    const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
+    
+    // Adjust layout based on device
+    if (isMobile || isTablet) {
+        // Reduce animation complexity
+        document.body.classList.add('reduce-motion');
+        
+        // Optimize images
+        optimizeImages();
+        
+        // Adjust grid layouts
+        adjustGridLayouts();
+    }
+    
+    // Listen for orientation changes
+    window.addEventListener('orientationchange', function() {
+        setTimeout(() => {
+            adjustGridLayouts();
+        }, 300);
+    });
+    
+    // Add touch-friendly interactions
+    if ('ontouchstart' in window) {
+        addTouchInteractions();
+    }
+}
+
+function optimizeImages() {
+    // Replace large images with smaller versions on mobile
+    const images = document.querySelectorAll('img:not([data-no-optimize])');
+    
+    images.forEach(img => {
+        // Add loading="lazy" for better performance
+        img.setAttribute('loading', 'lazy');
+        
+        // Replace high-res images with lower-res versions
+        if (img.src.includes('placeholder')) {
+            const width = window.innerWidth < 768 ? 400 : 600;
+            const height = window.innerWidth < 768 ? 300 : 400;
+            img.src = img.src.replace(/\d+x\d+/, `${width}x${height}`);
+        }
+        
+        // Add error handling
+        img.onerror = function() {
+            this.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+        };
+    });
+}
+
+function adjustGridLayouts() {
+    // Adjust grid layouts for better mobile display
+    const grids = document.querySelectorAll('.projects-grid, .skills-grid, .blog-grid, .design-showcase-grid');
+    
+    grids.forEach(grid => {
+        if (window.innerWidth < 768) {
+            grid.style.gridTemplateColumns = '1fr';
+        } else if (window.innerWidth < 1024) {
+            grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+        } else {
+            grid.style.gridTemplateColumns = '';  // Reset to CSS default
+        }
+    });
+    
+    // Adjust contact container for mobile
+    const contactContainer = document.querySelector('.contact-container');
+    if (contactContainer) {
+        if (window.innerWidth < 1024) {
+            contactContainer.style.gridTemplateColumns = '1fr';
+        } else {
+            contactContainer.style.gridTemplateColumns = '';
+        }
+    }
+}
+
+function addTouchInteractions() {
+    // Add active states for touch interactions
+    const interactiveElements = document.querySelectorAll('button, .btn, .nav-link, .card, .project-card, .blog-card');
+    
+    interactiveElements.forEach(element => {
+        element.addEventListener('touchstart', function() {
+            this.classList.add('touch-active');
+        }, { passive: true });
+        
+        element.addEventListener('touchend', function() {
+            this.classList.remove('touch-active');
+        }, { passive: true });
+    });
+    
+    // Improve touch targets
+    const smallButtons = document.querySelectorAll('.social-link, .github-link');
+    smallButtons.forEach(button => {
+        button.style.minHeight = '44px';
+        button.style.minWidth = '44px';
+    });
+}
+
+// Initialize design filter functionality
+function initDesignFilter() {
+    const filterButtons = document.querySelectorAll('.design-filter .filter-btn');
+    const designCards = document.querySelectorAll('.design-card');
+    
+    if (filterButtons.length === 0 || designCards.length === 0) return;
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const filterValue = this.getAttribute('data-filter');
+            
+            // Filter design cards
+            designCards.forEach(card => {
+                if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                    card.style.display = 'block';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1)';
+                    }, 10);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 300);
+                }
+            });
+        });
+    });
+}
+
+// Load Design Showcase from Firebase
+function loadDesignShowcase() {
+    const designGrid = document.getElementById('design-showcase-grid');
+    if (!designGrid) return;
+    
+    designGrid.innerHTML = `
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading design projects...</p>
+        </div>
+    `;
+    
+    const database = firebase.database();
+    const designRef = database.ref('designProjects');
+    
+    designRef.get().then((snapshot) => {
+        const designs = snapshot.val() || {};
+        
+        designGrid.innerHTML = '';
+        
+        if (Object.keys(designs).length === 0) {
+            displayDemoDesigns();
+        } else {
+            displayDesigns(Object.values(designs));
+        }
+    }).catch(error => {
+        console.error("Error fetching designs:", error);
+        designGrid.innerHTML = '<p>Error loading design projects. Please try again later.</p>';
+    });
+}
+
+function displayDemoDesigns() {
+    const demoDesigns = [
+        {
+            id: "design1",
+            title: "Modern Corporate Identity",
+            description: "Complete brand identity design including logo, business cards, and stationery.",
+            imageUrl: "https://via.placeholder.com/600x400",
+            category: "Graphic Design",
+            tools: ["Illustrator", "Photoshop", "InDesign"],
+            externalUrl: "#"
+        },
+        {
+            id: "design2",
+            title: "E-commerce Mobile App",
+            description: "User-centered mobile shopping experience with intuitive navigation and checkout flow.",
+            imageUrl: "https://via.placeholder.com/600x400",
+            category: "UI/UX Design",
+            tools: ["Figma", "Sketch", "Principle"],
+            externalUrl: "#"
+        },
+        {
+            id: "design3",
+            title: "Residential Building Design",
+            description: "3D architectural visualization and floor plans for a modern residential complex.",
+            imageUrl: "https://via.placeholder.com/600x400",
+            category: "AutoCAD",
+            tools: ["AutoCAD", "Revit", "3ds Max"],
+            externalUrl: "#"
+        },
+        {
+            id: "design4",
+            title: "Product Packaging Design",
+            description: "Creative packaging solution for an organic food brand with sustainable materials.",
+            imageUrl: "https://via.placeholder.com/600x400",
+            category: "Graphic Design",
+            tools: ["Illustrator", "Photoshop", "Dimension"],
+            externalUrl: "#"
+        }
+    ];
+    
+    displayDesigns(demoDesigns);
+}
+
+function displayDesigns(designs) {
+    const designGrid = document.getElementById('design-showcase-grid');
+    const fragment = document.createDocumentFragment();
+    
+    designs.forEach((design, index) => {
+        const designCard = document.createElement('div');
+        designCard.className = 'design-card';
+        designCard.setAttribute('data-category', design.category);
+        designCard.setAttribute('data-aos', 'fade-up');
+        designCard.setAttribute('data-aos-delay', Math.min((index + 1) * 50, 300));
+        
+        designCard.innerHTML = `
+            <div class="design-image-container">
+                <img src="${design.imageUrl}" alt="${design.title}" loading="lazy" class="design-image">
+                <div class="design-overlay">
+                    <div class="design-actions">
+                        <button class="view-design-btn" data-id="${design.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <a href="${design.externalUrl || '#'}" class="external-link" ${design.externalUrl ? 'target="_blank"' : ''}>
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="design-content">
+                <h3 class="design-title">${design.title}</h3>
+                <div class="design-category">${design.category}</div>
+                <p class="design-description">${design.description}</p>
+                <div class="design-tools">
+                    ${design.tools.map(tool => `<span class="design-tool">${tool}</span>`).join('')}
+                </div>
+            </div>
+        `;
+        
+        fragment.appendChild(designCard);
+    });
+    
+    designGrid.appendChild(fragment);
+    
+    // Initialize modal viewer for designs
+    initDesignViewer();
+}
+
+// Initialize design viewer modal
+function initDesignViewer() {
+    const modal = document.getElementById('design-modal');
+    const modalImg = document.getElementById('design-modal-image');
+    const modalTitle = document.getElementById('design-modal-title');
+    const modalDesc = document.getElementById('design-modal-description');
+    const modalTools = document.getElementById('design-modal-tools');
+    const closeBtn = document.querySelector('.close-modal');
+    
+    if (!modal || !modalImg || !modalTitle || !modalDesc || !modalTools || !closeBtn) return;
+    
+    // Get all view buttons
+    const viewButtons = document.querySelectorAll('.view-design-btn');
+    
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const designId = this.getAttribute('data-id');
+            const designCard = this.closest('.design-card');
+            
+            // Get design details
+            const image = designCard.querySelector('.design-image').src;
+            const title = designCard.querySelector('.design-title').textContent;
+            const description = designCard.querySelector('.design-description').textContent;
+            const toolsElements = designCard.querySelectorAll('.design-tool');
+            
+            // Set modal content
+            modalImg.src = image;
+            modalTitle.textContent = title;
+            modalDesc.textContent = description;
+            
+            // Set tools
+            modalTools.innerHTML = '';
+            toolsElements.forEach(tool => {
+                const toolElement = document.createElement('span');
+                toolElement.className = 'design-tool';
+                toolElement.textContent = tool.textContent;
+                modalTools.appendChild(toolElement);
+            });
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        });
+    });
+    
+    // Close modal
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Close modal with Escape key
+    window.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modal.style.display === 'block') {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+}
+
 // Add responsive design best practices for mobile optimization
 window.addEventListener('load', function() {
+    // Initialize responsive optimizations
+    initResponsiveOptimizations();
+    
     // Add viewport-specific adjustments
     const isMobile = window.innerWidth < 768;
     const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
     
     if (isMobile) {
-        // Reduce animation complexity on mobile
-        document.body.classList.add('reduce-motion');
-        
         // Optimize images for mobile
         const images = document.querySelectorAll('img');
         images.forEach(img => {
@@ -1595,11 +2193,12 @@ window.addEventListener('load', function() {
         buttons.forEach(button => {
             button.addEventListener('touchstart', function() {
                 this.classList.add('active-touch');
-            });
+            }, { passive: true });
             
             button.addEventListener('touchend', function() {
                 this.classList.remove('active-touch');
-            });
+            }, { passive: true });
         });
     }
 });
+
