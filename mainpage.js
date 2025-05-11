@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
         duration: 800,
         easing: 'ease-in-out',
         once: true,
-        mirror: false
+        mirror: false,
+        disable: window.innerWidth < 768 // Disable on mobile for better performance
     });
 
     // Initialize all components
@@ -16,18 +17,11 @@ document.addEventListener('DOMContentLoaded', function() {
     initSkillsFilter();
     initFlipCards();
     initBackToTop();
-    initLoginModal();
     initAnimatedBackground();
     init3DModel();
-    initVisitorCounter();
-    initKonamiCode();
     
-    // Firebase initialization (if available)
-    try {
-        initFirebase();
-    } catch (error) {
-        console.error("Firebase initialization error:", error);
-    }
+    // Firebase initialization
+    initFirebase();
 });
 
 // Theme Toggle
@@ -152,10 +146,12 @@ function initParallaxEffect() {
         const scrollTop = window.pageYOffset;
         
         parallaxElements.forEach(element => {
-            const speed = element.getAttribute('data-speed');
-            const yPos = -(scrollTop * speed);
-            
-            element.style.transform = `translateY(${yPos}px)`;
+            if (!element.classList.contains('parallax-layer')) {
+                const speed = element.getAttribute('data-speed');
+                const yPos = -(scrollTop * speed);
+                
+                element.style.transform = `translateY(${yPos}px)`;
+            }
         });
     });
 }
@@ -241,35 +237,12 @@ function initBackToTop() {
     });
 }
 
-// Login modal
-function initLoginModal() {
-    const loginBtn = document.getElementById('login-btn');
-    const loginModal = document.getElementById('login-modal');
-    const closeModal = document.querySelector('.close-modal');
-    
-    loginBtn.addEventListener('click', function() {
-        window.location.href = 'auth.html';
-    });
-    
-    if (closeModal) {
-        closeModal.addEventListener('click', function() {
-            loginModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
-        
-        window.addEventListener('click', function(event) {
-            if (event.target === loginModal) {
-                loginModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-        });
-    }
-}
-
 // Animated Background with Particles
 function initAnimatedBackground() {
     const particlesContainer = document.querySelector('.particles-container');
-    const particleCount = 80;
+    
+    // Reduce particle count on mobile for better performance
+    const particleCount = window.innerWidth < 768 ? 40 : 80;
     
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
@@ -418,29 +391,42 @@ function init3DModel() {
     animate();
     
     // Control buttons
-    document.getElementById('rotate-model').addEventListener('click', function() {
-        isRotating = !isRotating;
-        this.innerHTML = isRotating ? '<i class="fas fa-pause"></i> Pause' : '<i class="fas fa-sync"></i> Rotate';
-    });
+    const rotateBtn = document.getElementById('rotate-model');
+    const zoomBtn = document.getElementById('zoom-model');
+    const resetBtn = document.getElementById('reset-model');
     
-    document.getElementById('zoom-model').addEventListener('click', function() {
-        isZooming = !isZooming;
-        this.innerHTML = isZooming ? '<i class="fas fa-search-minus"></i> Zoom Out' : '<i class="fas fa-search-plus"></i> Zoom In';
-    });
+    if (rotateBtn) {
+        rotateBtn.addEventListener('click', function() {
+            isRotating = !isRotating;
+            this.innerHTML = isRotating ? '<i class="fas fa-pause"></i> Pause' : '<i class="fas fa-sync"></i> Rotate';
+        });
+    }
     
-    document.getElementById('reset-model').addEventListener('click', function() {
-        outerPrism.rotation.x = 0;
-        outerPrism.rotation.y = 0;
-        middlePrism.rotation.x = 0;
-        middlePrism.rotation.y = 0;
-        innerPrism.rotation.x = 0;
-        innerPrism.rotation.y = 0;
-        
-        zoomLevel = 5;
-        camera.position.z = zoomLevel;
-        isZooming = false;
-        document.getElementById('zoom-model').innerHTML = '<i class="fas fa-search-plus"></i> Zoom In';
-    });
+    if (zoomBtn) {
+        zoomBtn.addEventListener('click', function() {
+            isZooming = !isZooming;
+            this.innerHTML = isZooming ? '<i class="fas fa-search-minus"></i> Zoom Out' : '<i class="fas fa-search-plus"></i> Zoom In';
+        });
+    }
+    
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            outerPrism.rotation.x = 0;
+            outerPrism.rotation.y = 0;
+            middlePrism.rotation.x = 0;
+            middlePrism.rotation.y = 0;
+            innerPrism.rotation.x = 0;
+            innerPrism.rotation.y = 0;
+            
+            zoomLevel = 5;
+            camera.position.z = zoomLevel;
+            isZooming = false;
+            
+            if (zoomBtn) {
+                zoomBtn.innerHTML = '<i class="fas fa-search-plus"></i> Zoom In';
+            }
+        });
+    }
     
     // Resize handler
     window.addEventListener('resize', function() {
@@ -453,152 +439,13 @@ function init3DModel() {
     });
 }
 
-// Visitor counter with Firebase
-function initVisitorCounter() {
-    const visitorCountElement = document.getElementById('visitor-count');
-    
-    // If Firebase is available, increment and fetch visitor count
-    if (typeof firebase !== 'undefined' && firebase.database) {
-        const database = firebase.database();
-        const visitorCountRef = database.ref('visitorCount');
-        
-        // Increment visitor count
-        visitorCountRef.transaction(function(currentCount) {
-            return (currentCount || 0) + 1;
-        });
-        
-        // Listen for count updates
-        visitorCountRef.on('value', function(snapshot) {
-            const count = snapshot.val() || 0;
-            animateCounter(visitorCountElement, count);
-        });
-    } else {
-        // Fallback if Firebase is not available
-        const randomCount = Math.floor(Math.random() * 5000) + 1000;
-        animateCounter(visitorCountElement, randomCount);
-    }
-    
-    // Animate counter
-    function animateCounter(element, targetCount) {
-        const duration = 2000; // 2 seconds
-        const frameDuration = 1000 / 60; // 60fps
-        const totalFrames = Math.round(duration / frameDuration);
-        
-        let frame = 0;
-        const startValue = parseInt(element.textContent.replace(/,/g, '')) || 0;
-        const increment = (targetCount - startValue) / totalFrames;
-        
-        const counter = setInterval(() => {
-            frame++;
-            const currentCount = Math.floor(startValue + increment * frame);
-            element.textContent = currentCount.toLocaleString();
-            
-            if (frame === totalFrames) {
-                clearInterval(counter);
-                element.textContent = targetCount.toLocaleString();
-            }
-        }, frameDuration);
-    }
-}
-
-// Konami Code Easter Egg
-function initKonamiCode() {
-    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-    let konamiCodePosition = 0;
-    
-    document.addEventListener('keydown', function(e) {
-        // Get the key pressed
-        const key = e.key;
-        
-        // Check if the key matches the next key in the Konami code
-        if (key === konamiCode[konamiCodePosition]) {
-            konamiCodePosition++;
-            
-            // If the entire code is entered correctly
-            if (konamiCodePosition === konamiCode.length) {
-                activateEasterEgg();
-                konamiCodePosition = 0;
-            }
-        } else {
-            konamiCodePosition = 0;
-        }
-    });
-    
-    function activateEasterEgg() {
-        // Create a fun animation or effect
-        const body = document.body;
-        const easterEgg = document.createElement('div');
-        
-        easterEgg.style.position = 'fixed';
-        easterEgg.style.top = '0';
-        easterEgg.style.left = '0';
-        easterEgg.style.width = '100%';
-        easterEgg.style.height = '100%';
-        easterEgg.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
-        easterEgg.style.zIndex = '9999';
-        easterEgg.style.display = 'flex';
-        easterEgg.style.justifyContent = 'center';
-        easterEgg.style.alignItems = 'center';
-        easterEgg.style.flexDirection = 'column';
-        easterEgg.style.color = 'white';
-        easterEgg.style.fontFamily = "'Press Start 2P', cursive";
-        easterEgg.style.textAlign = 'center';
-        
-        easterEgg.innerHTML = `
-            <h1 style="margin-bottom: 20px; font-size: 2rem;">KONAMI CODE ACTIVATED!</h1>
-            <p style="margin-bottom: 30px;">Welcome to the Archeverse secret zone!</p>
-            <div class="game-character" style="font-size: 5rem;">🚀</div>
-            <button id="close-easter-egg" style="margin-top: 30px; padding: 10px 20px; background: var(--accent-color); border: none; color: white; cursor: pointer; border-radius: 5px;">Close</button>
-        `;
-        
-        body.appendChild(easterEgg);
-        
-        // Animate the character
-        const character = easterEgg.querySelector('.game-character');
-        let position = -50;
-        
-        const animation = setInterval(() => {
-            position += 5;
-            character.style.transform = `translateX(${position}px)`;
-            
-            if (position > 50) {
-                clearInterval(animation);
-                
-                // Reverse animation
-                const reverseAnimation = setInterval(() => {
-                    position -= 5;
-                    character.style.transform = `translateX(${position}px)`;
-                    
-                    if (position < -50) {
-                        clearInterval(reverseAnimation);
-                        
-                        // Repeat the animation
-                        const repeatAnimation = setInterval(() => {
-                            position += 5;
-                            character.style.transform = `translateX(${position}px)`;
-                            
-                            if (position > 0) {
-                                clearInterval(repeatAnimation);
-                            }
-                        }, 50);
-                    }
-                }, 50);
-            }
-        }, 50);
-        
-        // Close the easter egg
-        document.getElementById('close-easter-egg').addEventListener('click', function() {
-            body.removeChild(easterEgg);
-        });
-    }
-}
-
 // Firebase initialization
 function initFirebase() {
     // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyDQ0LKF-yCoo5k1gl_ntt8r-9tR4QBZGyE",
         authDomain: "archeverse-7d502.firebaseapp.com",
+        databaseURL: "https://archeverse-7d502-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "archeverse-7d502",
         storageBucket: "archeverse-7d502.firebasestorage.app",
         messagingSenderId: "489295358544",
@@ -609,81 +456,16 @@ function initFirebase() {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     
-    // Setup authentication listeners
-    const auth = firebase.auth();
+    // Initialize Analytics
+    firebase.analytics();
     
-    // Login form submission
-    const loginForm = document.querySelector('.login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Signed in
-                    const user = userCredential.user;
-                    console.log("User signed in:", user);
-                    
-                    // Close the modal
-                    document.getElementById('login-modal').style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                    
-                    // Show success message
-                    alert('Successfully signed in!');
-                })
-                .catch((error) => {
-                    console.error("Login error:", error);
-                    alert(`Login failed: ${error.message}`);
-                });
-        });
-    }
-    
-    // Google sign-in
-    const googleLoginBtn = document.querySelector('.google-login');
-    if (googleLoginBtn) {
-        googleLoginBtn.addEventListener('click', function() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    // Close the modal
-                    document.getElementById('login-modal').style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                    
-                    // Show success message
-                    alert('Successfully signed in with Google!');
-                })
-                .catch((error) => {
-                    console.error("Google login error:", error);
-                    alert(`Google login failed: ${error.message}`);
-                });
-        });
-    }
-    
-    // GitHub sign-in
-    const githubLoginBtn = document.querySelector('.github-login');
-    if (githubLoginBtn) {
-        githubLoginBtn.addEventListener('click', function() {
-            const provider = new firebase.auth.GithubAuthProvider();
-            
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    // Close the modal
-                    document.getElementById('login-modal').style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                    
-                    // Show success message
-                    alert('Successfully signed in with GitHub!');
-                })
-                .catch((error) => {
-                    console.error("GitHub login error:", error);
-                    alert(`GitHub login failed: ${error.message}`);
-                });
-        });
-    }
+    // Load dynamic content from Firebase
+    loadProjects();
+    loadSkills();
+    loadExperience();
+    loadBlogPosts();
+    loadLinkedInPosts();
+    setupRealTimeListeners();
     
     // Contact form submission
     const contactForm = document.getElementById('contact-form');
@@ -740,73 +522,498 @@ function initFirebase() {
             });
         });
     }
+}
+
+// Load Projects from Firebase
+function loadProjects() {
+    const projectsGrid = document.getElementById('projects-grid');
+    if (!projectsGrid) return;
     
-    // Update project timestamps
-    const updateTimeElements = document.querySelectorAll('.update-time');
+    const database = firebase.database();
+    const projectsRef = database.ref('projects');
     
-    if (updateTimeElements.length > 0) {
-        const database = firebase.database();
-        const projectUpdatesRef = database.ref('projectUpdates');
+    projectsRef.on('value', (snapshot) => {
+        const projects = snapshot.val() || {};
+        projectsGrid.innerHTML = ''; // Clear existing projects
         
-        projectUpdatesRef.once('value')
-            .then((snapshot) => {
-                const updates = snapshot.val() || {};
-                
-                updateTimeElements.forEach((element, index) => {
-                    const projectId = `project${index + 1}`;
-                    const lastUpdate = updates[projectId] || Date.now() - (Math.random() * 1000000000);
-                    
-                    element.textContent = formatTimeAgo(lastUpdate);
-                });
-            })
-            .catch((error) => {
-                console.error("Error fetching project updates:", error);
-                
-                // Fallback to random times
-                updateTimeElements.forEach((element) => {
-                    const randomTime = getRandomTimeAgo();
-                    element.textContent = randomTime;
-                });
-            });
-    }
-    
-    // Format timestamp to "time ago" string
-    function formatTimeAgo(timestamp) {
-        const now = Date.now();
-        const diff = now - timestamp;
-        
-        const seconds = Math.floor(diff / 1000);
-        const minutes = Math.floor(seconds / 60);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-        const weeks = Math.floor(days / 7);
-        
-        if (weeks > 0) {
-            return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
-        } else if (days > 0) {
-            return `${days} day${days > 1 ? 's' : ''} ago`;
-        } else if (hours > 0) {
-            return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-        } else if (minutes > 0) {
-            return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        // If no projects found, create demo projects
+        if (Object.keys(projects).length === 0) {
+            const demoProjects = [
+                {
+                    title: "Autonomous Drone Navigation",
+                    description: "AI-powered drone that navigates complex environments using computer vision and machine learning algorithms.",
+                    imageUrl: "https://via.placeholder.com/600x400",
+                    technologies: ["Python", "TensorFlow", "ROS"],
+                    detailsUrl: "#",
+                    githubUrl: "#",
+                    status: "live",
+                    lastUpdated: Date.now() - 7200000 // 2 hours ago
+                },
+                {
+                    title: "Structural Analysis Dashboard",
+                    description: "Interactive dashboard for civil engineers to analyze structural integrity in real-time with 3D visualizations.",
+                    imageUrl: "https://via.placeholder.com/600x400",
+                    technologies: ["React", "Three.js", "Firebase"],
+                    detailsUrl: "#",
+                    githubUrl: "#",
+                    status: "development",
+                    lastUpdated: Date.now() - 259200000 // 3 days ago
+                },
+                {
+                    title: "ML-Powered Traffic Analysis",
+                    description: "Machine learning system that predicts traffic patterns for urban planning with real-time data visualization.",
+                    imageUrl: "https://via.placeholder.com/600x400",
+                    technologies: ["Python", "Scikit-learn", "D3.js"],
+                    detailsUrl: "#",
+                    githubUrl: "#",
+                    status: "live",
+                    lastUpdated: Date.now() - 604800000 // 1 week ago
+                }
+            ];
+            
+            // Display demo projects
+            displayProjects(demoProjects);
         } else {
-            return 'just now';
+            // Display projects from Firebase
+            displayProjects(Object.values(projects));
+        }
+    });
+    
+    function displayProjects(projects) {
+        projects.forEach((project, index) => {
+            const isLive = project.status === 'live';
+            
+            const projectCard = document.createElement('div');
+            projectCard.className = 'flip-card';
+            projectCard.setAttribute('data-aos', 'fade-up');
+            projectCard.setAttribute('data-aos-delay', (index + 1) * 100);
+            
+            // Create project card HTML structure
+            projectCard.innerHTML = `
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="${project.imageUrl}" alt="${project.title}">
+                        ${isLive ? '<div class="live-badge"><span class="live-dot"></span>LIVE</div>' : ''}
+                        <div class="flip-card-title">
+                            <h3>${project.title}</h3>
+                            <p class="flip-hint">Click to flip</p>
+                        </div>
+                    </div>
+                    <div class="flip-card-back">
+                        <div class="flip-card-content">
+                            <h3>${project.title}</h3>
+                            <p>${project.description}</p>
+                            <div class="tech-stack">
+                                ${project.technologies.map(tech => `<span>${tech}</span>`).join('')}
+                            </div>
+                            <div class="project-links">
+                                <a href="${project.detailsUrl}" class="project-btn">View Details</a>
+                                <a href="${project.githubUrl}" class="github-link"><i class="fab fa-github"></i></a>
+                            </div>
+                            <div class="last-updated">
+                                <small>Last updated: <span class="update-time">${formatTimeAgo(project.lastUpdated)}</span></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            projectsGrid.appendChild(projectCard);
+        });
+        
+        // Reinitialize flip cards
+        initFlipCards();
+    }
+}
+
+// Load Skills from Firebase
+function loadSkills() {
+    const skillsGrid = document.getElementById('skills-grid');
+    if (!skillsGrid) return;
+    
+    const database = firebase.database();
+    const skillsRef = database.ref('skills');
+    
+    skillsRef.on('value', (snapshot) => {
+        const skills = snapshot.val() || {};
+        skillsGrid.innerHTML = ''; // Clear existing skills
+        
+        // If no skills found, create demo skills
+        if (Object.keys(skills).length === 0) {
+            const demoSkills = [
+                {
+                    name: "Python",
+                    icon: "fab fa-python",
+                    rating: 5,
+                    description: "Built 10+ ML models and automation systems",
+                    experience: "5+ years",
+                    categories: ["engineering", "data-science"]
+                },
+                {
+                    name: "Structural Analysis",
+                    icon: "fas fa-building",
+                    rating: 4,
+                    description: "Designed 5 major building structures",
+                    experience: "4+ years",
+                    categories: ["engineering"]
+                },
+                {
+                    name: "Machine Learning",
+                    icon: "fas fa-brain",
+                    rating: 4,
+                    description: "Developed predictive models with 90%+ accuracy",
+                    experience: "3+ years",
+                    categories: ["data-science"]
+                },
+                {
+                    name: "ROS",
+                    icon: "fas fa-robot",
+                    rating: 3,
+                    description: "Built 3 autonomous robot prototypes",
+                    experience: "2+ years",
+                    categories: ["robotics"]
+                }
+            ];
+            
+            // Display demo skills
+            displaySkills(demoSkills);
+        } else {
+            // Display skills from Firebase
+            displaySkills(Object.values(skills));
+        }
+    });
+    
+    function displaySkills(skills) {
+        skills.forEach((skill, index) => {
+            const skillCard = document.createElement('div');
+            skillCard.className = 'skill-card';
+            skillCard.setAttribute('data-category', skill.categories.join(' '));
+            skillCard.setAttribute('data-aos', 'fade-up');
+            skillCard.setAttribute('data-aos-delay', (index + 1) * 100);
+            
+            // Create skill card HTML structure
+            skillCard.innerHTML = `
+                <div class="skill-card-inner">
+                    <div class="skill-card-front">
+                        <div class="skill-icon">
+                            <i class="${skill.icon}"></i>
+                        </div>
+                        <h3>${skill.name}</h3>
+                    </div>
+                    <div class="skill-card-back">
+                        <div class="skill-rating">
+                            ${Array(5).fill().map((_, i) => 
+                                `<i class="${i < skill.rating ? 'fas fa-star' : 'far fa-star'}"></i>`
+                            ).join('')}
+                        </div>
+                        <p>${skill.description}</p>
+                        <div class="experience-years">${skill.experience}</div>
+                    </div>
+                </div>
+            `;
+            
+            skillsGrid.appendChild(skillCard);
+        });
+        
+        // Reinitialize skill cards
+        initFlipCards();
+    }
+}
+
+// Load Experience from Firebase
+function loadExperience() {
+    const timeline = document.getElementById('experience-timeline');
+    if (!timeline) return;
+    
+    const database = firebase.database();
+    const experienceRef = database.ref('experience');
+    
+    experienceRef.on('value', (snapshot) => {
+        const experiences = snapshot.val() || {};
+        timeline.innerHTML = ''; // Clear existing experiences
+        
+        // If no experiences found, create demo experiences
+        if (Object.keys(experiences).length === 0) {
+            const demoExperiences = [
+                {
+                    period: "2022 - Present",
+                    title: "Senior Data Scientist",
+                    company: "TechInnovate Inc.",
+                    description: "Leading a team of 5 data scientists in developing predictive models for urban infrastructure planning. Implemented ML solutions that improved efficiency by 35%.",
+                    tags: ["Machine Learning", "Team Leadership"],
+                    type: "job"
+                },
+                {
+                    period: "2020 - 2022",
+                    title: "Structural Engineer",
+                    company: "BuildWell Engineering",
+                    description: "Designed and analyzed structural components for commercial buildings. Developed automated tools that reduced design time by 25%.",
+                    tags: ["Structural Analysis", "AutoCAD"],
+                    type: "job"
+                },
+                {
+                    period: "2019 - 2020",
+                    title: "MSc in Data Science",
+                    company: "Tech University",
+                    description: "Graduated with distinction. Thesis on \"Machine Learning Applications in Structural Engineering\" received academic excellence award.",
+                    tags: ["Academic Research", "Data Analysis"],
+                    type: "education"
+                },
+                {
+                    period: "2015 - 2019",
+                    title: "BSc in Civil Engineering",
+                    company: "Engineering Institute",
+                    description: "Graduated summa cum laude. Led the university robotics team to national championship.",
+                    tags: ["Engineering Fundamentals", "Robotics Team"],
+                    type: "education"
+                }
+            ];
+            
+            // Display demo experiences
+            displayExperiences(demoExperiences);
+        } else {
+            // Display experiences from Firebase
+            displayExperiences(Object.values(experiences));
+        }
+    });
+    
+    function displayExperiences(experiences) {
+        experiences.forEach((exp, index) => {
+            const timelineItem = document.createElement('div');
+            timelineItem.className = 'timeline-item';
+            timelineItem.setAttribute('data-aos', index % 2 === 0 ? 'fade-right' : 'fade-left');
+            
+            // Create timeline item HTML structure
+            timelineItem.innerHTML = `
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-date">${exp.period}</div>
+                    <h3>${exp.title}</h3>
+                    <h4>${exp.company}</h4>
+                    <p>${exp.description}</p>
+                    <div class="timeline-tags">
+                        ${exp.tags.map(tag => `<span>${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            timeline.appendChild(timelineItem);
+        });
+    }
+}
+
+// Load Blog Posts from Firebase
+function loadBlogPosts() {
+    const blogGrid = document.getElementById('blog-grid');
+    if (!blogGrid) return;
+    
+    const database = firebase.database();
+    const blogRef = database.ref('blogPosts');
+    
+    blogRef.on('value', (snapshot) => {
+        const posts = snapshot.val() || {};
+        blogGrid.innerHTML = ''; // Clear existing posts
+        
+        // If no posts found, create demo posts
+        if (Object.keys(posts).length === 0) {
+            const currentDate = new Date();
+            const demoPosts = [
+                {
+                    title: "Building Autonomous Robots with ROS and TensorFlow",
+                    excerpt: "A comprehensive guide to integrating machine learning models with robotic operating systems.",
+                    imageUrl: "https://via.placeholder.com/600x400",
+                    category: "Robotics",
+                    date: new Date(2025, 4, 5).getTime(), // May 5, 2025
+                    url: "#"
+                },
+                {
+                    title: "Predictive Modeling for Urban Infrastructure",
+                    excerpt: "How data science is revolutionizing the way we design and maintain city infrastructure.",
+                    imageUrl: "https://via.placeholder.com/600x400",
+                    category: "Data Science",
+                    date: new Date(2025, 3, 22).getTime(), // April 22, 2025
+                    url: "#"
+                },
+                {
+                    title: "From Civil Engineer to Data Scientist: My Journey",
+                    excerpt: "Personal insights and lessons learned during my transition between fields.",
+                    imageUrl: "https://via.placeholder.com/600x400",
+                    category: "Engineering",
+                    date: new Date(2025, 3, 10).getTime(), // April 10, 2025
+                    url: "#"
+                }
+            ];
+            
+            // Display demo posts
+            displayBlogPosts(demoPosts);
+        } else {
+            // Display posts from Firebase
+            displayBlogPosts(Object.values(posts));
+        }
+    });
+    
+    function displayBlogPosts(posts) {
+        posts.forEach((post, index) => {
+            const blogCard = document.createElement('div');
+            blogCard.className = 'blog-card';
+            blogCard.setAttribute('data-aos', 'fade-up');
+            blogCard.setAttribute('data-aos-delay', (index + 1) * 100);
+            
+            // Format date
+            const postDate = new Date(post.date);
+            const formattedDate = postDate.toLocaleDateString('en-US', { 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+            
+            // Create blog card HTML structure
+            blogCard.innerHTML = `
+                <div class="blog-img">
+                    <img src="${post.imageUrl}" alt="${post.title}">
+                    <div class="blog-category">${post.category}</div>
+                </div>
+                <div class="blog-content">
+                    <div class="blog-date">${formattedDate}</div>
+                    <h3>${post.title}</h3>
+                    <p>${post.excerpt}</p>
+                    <a href="${post.url}" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                </div>
+            `;
+            
+            blogGrid.appendChild(blogCard);
+        });
+    }
+}
+
+// Load LinkedIn Posts from Firebase
+function loadLinkedInPosts() {
+    const linkedinFeed = document.getElementById('linkedin-feed');
+    if (!linkedinFeed) return;
+    
+    const database = firebase.database();
+    const linkedinRef = database.ref('linkedinPosts');
+    
+    linkedinRef.on('value', (snapshot) => {
+        const posts = snapshot.val() || {};
+        linkedinFeed.innerHTML = ''; // Clear existing posts
+        
+        // If no LinkedIn posts found, show a message
+        if (Object.keys(posts).length === 0) {
+            linkedinFeed.innerHTML = `
+                <div class="no-posts-message">
+                    <i class="fab fa-linkedin" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                    <p>LinkedIn posts will appear here once added through the admin interface.</p>
+                </div>
+            `;
+        } else {
+            // Create a container for the LinkedIn posts
+            const postsContainer = document.createElement('div');
+            postsContainer.className = 'linkedin-posts-container';
+            
+            Object.values(posts).forEach(post => {
+                // Create a wrapper for each LinkedIn post
+                const postWrapper = document.createElement('div');
+                postWrapper.className = 'linkedin-post-wrapper';
+                
+                // Insert the embed code
+                postWrapper.innerHTML = post.embedCode;
+                
+                postsContainer.appendChild(postWrapper);
+            });
+            
+            linkedinFeed.appendChild(postsContainer);
+            
+            // Load LinkedIn SDK if needed
+            loadLinkedInSDK();
+        }
+    });
+    
+    function loadLinkedInSDK() {
+        if (!document.getElementById('linkedin-sdk')) {
+            const script = document.createElement('script');
+            script.id = 'linkedin-sdk';
+            script.src = 'https://platform.linkedin.com/in.js';
+            script.type = 'text/javascript';
+            document.head.appendChild(script);
         }
     }
+}
+
+// Setup real-time listeners for dynamic content
+function setupRealTimeListeners() {
+    const database = firebase.database();
     
-    // Generate random "time ago" string for fallback
-    function getRandomTimeAgo() {
-        const options = [
-            'just now',
-            '5 minutes ago',
-            '1 hour ago',
-            '3 hours ago',
-            'yesterday',
-            '2 days ago',
-            '1 week ago',
-            '2 weeks ago'
-        ];
+    // Listen for current project updates
+    const currentProjectRef = database.ref('currentProject');
+    const currentProjectElement = document.getElementById('current-project');
+    
+    if (currentProjectElement) {
+        currentProjectRef.on('value', (snapshot) => {
+            const projectName = snapshot.val() || 'AI-Powered Robotics Platform';
+            currentProjectElement.textContent = projectName;
+        });
+    }
+    
+    // Listen for visitor count updates
+    const visitorCountRef = database.ref('visitorCount');
+    const visitorCountElement = document.getElementById('visitor-count');
+    
+    if (visitorCountElement) {
+        // Increment visitor count
+        visitorCountRef.transaction(function(currentCount) {
+            return (currentCount || 0) + 1;
+        });
         
-        return options[Math.floor(Math.random() * options.length)];
+        visitorCountRef.on('value', (snapshot) => {
+            const count = snapshot.val() || 1024;
+            animateCounter(visitorCountElement, count);
+        });
+    }
+}
+
+// Animate counter
+function animateCounter(element, targetCount) {
+    const duration = 2000; // 2 seconds
+    const frameDuration = 1000 / 60; // 60fps
+    const totalFrames = Math.round(duration / frameDuration);
+    
+    let frame = 0;
+    const startValue = parseInt(element.textContent.replace(/,/g, '')) || 0;
+    const increment = (targetCount - startValue) / totalFrames;
+    
+    const counter = setInterval(() => {
+        frame++;
+        const currentCount = Math.floor(startValue + increment * frame);
+        element.textContent = currentCount.toLocaleString();
+        
+        if (frame === totalFrames) {
+            clearInterval(counter);
+            element.textContent = targetCount.toLocaleString();
+        }
+    }, frameDuration);
+}
+
+// Format timestamp to "time ago" string
+function formatTimeAgo(timestamp) {
+    const now = Date.now();
+    const diff = now - timestamp;
+    
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
+    
+    if (weeks > 0) {
+        return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+    } else if (days > 0) {
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+    } else if (hours > 0) {
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else if (minutes > 0) {
+        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else {
+        return 'just now';
     }
 }
