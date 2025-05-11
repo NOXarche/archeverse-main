@@ -57,27 +57,42 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Check if user has admin role
-    function checkAdminRole(user) {
-        const db = firebase.firestore();
-        db.collection('users').doc(user.uid).get()
-            .then((doc) => {
-                if (doc.exists && doc.data().isAdmin === true) {
+// Check if user has admin role
+function checkAdminRole(user) {
+    console.log("Checking admin role for user:", user.uid);
+    
+    const db = firebase.firestore();
+    db.collection('users').doc(user.uid).get()
+        .then((doc) => {
+            console.log("User document:", doc.exists ? "exists" : "does not exist");
+            if (doc.exists) {
+                console.log("User data:", doc.data());
+                console.log("isAdmin value:", doc.data().isAdmin);
+                
+                if (doc.data().isAdmin === true) {
                     // User is admin, update UI with user info
+                    console.log("User is admin, initializing admin interface");
                     updateUserInfo(user, doc.data());
                     initializeAdmin();
                 } else {
                     // Not an admin, redirect to main page
+                    console.log("User is not admin, redirecting");
                     alert('You do not have admin privileges.');
                     window.location.href = 'index.html';
                 }
-            })
-            .catch((error) => {
-                console.error("Error checking admin role:", error);
-                alert('Authentication error. Please try again.');
+            } else {
+                console.log("User document does not exist");
+                alert('User profile not found.');
                 window.location.href = 'index.html';
-            });
-    }
+            }
+        })
+        .catch((error) => {
+            console.error("Error checking admin role:", error);
+            alert('Authentication error: ' + error.message);
+            window.location.href = 'index.html';
+        });
+}
+
     
     // Update user info in the UI
     function updateUserInfo(user, userData) {
