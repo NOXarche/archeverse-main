@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Archeverse | Digital Innovation Hub</title>
     <link rel="stylesheet" href="mainpage.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +19,8 @@
         <div class="gradient-sphere sphere-1"></div>
         <div class="gradient-sphere sphere-2"></div>
         <div class="gradient-sphere sphere-3"></div>
+        <div class="gradient-sphere sphere-4"></div>
+        <div class="gradient-sphere sphere-5"></div>
         <div class="particles-container"></div>
         <div class="grid-overlay"></div>
     </div>
@@ -82,6 +84,7 @@
                     <a href="#skills" class="nav-link"><i class="fas fa-tools"></i> Skills</a>
                     <a href="#experience" class="nav-link"><i class="fas fa-briefcase"></i> Experience</a>
                     <a href="#blog" class="nav-link"><i class="fas fa-pen"></i> Blog</a>
+                    <a href="#linkedin" class="nav-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
                     <a href="auth.html" class="login-btn" id="login-btn"><i class="fas fa-lock"></i> VIP Login</a>
                 </div>
                 <div class="hamburger" id="hamburger">
@@ -100,106 +103,11 @@
                 <h2>Featured Projects</h2>
                 <p>Explore my latest innovations and creations</p>
             </div>
-            <div class="projects-grid">
-                <!-- Project Card 1 - Flip Card -->
-                <div class="flip-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">
-                            <img src="https://via.placeholder.com/600x400" alt="Project 1">
-                            <div class="live-badge">
-                                <span class="live-dot"></span>
-                                LIVE
-                            </div>
-                            <div class="flip-card-title">
-                                <h3>Autonomous Drone Navigation</h3>
-                                <p class="flip-hint">Click to flip</p>
-                            </div>
-                        </div>
-                        <div class="flip-card-back">
-                            <div class="flip-card-content">
-                                <h3>Autonomous Drone Navigation</h3>
-                                <p>AI-powered drone that navigates complex environments using computer vision and machine learning algorithms.</p>
-                                <div class="tech-stack">
-                                    <span>Python</span>
-                                    <span>TensorFlow</span>
-                                    <span>ROS</span>
-                                </div>
-                                <div class="project-links">
-                                    <a href="#" class="project-btn">View Details</a>
-                                    <a href="#" class="github-link"><i class="fab fa-github"></i></a>
-                                </div>
-                                <div class="last-updated">
-                                    <small>Last updated: <span class="update-time">2 hours ago</span></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project Card 2 - Flip Card -->
-                <div class="flip-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">
-                            <img src="https://via.placeholder.com/600x400" alt="Project 2">
-                            <div class="flip-card-title">
-                                <h3>Structural Analysis Dashboard</h3>
-                                <p class="flip-hint">Click to flip</p>
-                            </div>
-                        </div>
-                        <div class="flip-card-back">
-                            <div class="flip-card-content">
-                                <h3>Structural Analysis Dashboard</h3>
-                                <p>Interactive dashboard for civil engineers to analyze structural integrity in real-time with 3D visualizations.</p>
-                                <div class="tech-stack">
-                                    <span>React</span>
-                                    <span>Three.js</span>
-                                    <span>Firebase</span>
-                                </div>
-                                <div class="project-links">
-                                    <a href="#" class="project-btn">View Details</a>
-                                    <a href="#" class="github-link"><i class="fab fa-github"></i></a>
-                                </div>
-                                <div class="last-updated">
-                                    <small>Last updated: <span class="update-time">3 days ago</span></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project Card 3 - Flip Card -->
-                <div class="flip-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">
-                            <img src="https://via.placeholder.com/600x400" alt="Project 3">
-                            <div class="live-badge">
-                                <span class="live-dot"></span>
-                                LIVE
-                            </div>
-                            <div class="flip-card-title">
-                                <h3>ML-Powered Traffic Analysis</h3>
-                                <p class="flip-hint">Click to flip</p>
-                            </div>
-                        </div>
-                        <div class="flip-card-back">
-                            <div class="flip-card-content">
-                                <h3>ML-Powered Traffic Analysis</h3>
-                                <p>Machine learning system that predicts traffic patterns for urban planning with real-time data visualization.</p>
-                                <div class="tech-stack">
-                                    <span>Python</span>
-                                    <span>Scikit-learn</span>
-                                    <span>D3.js</span>
-                                </div>
-                                <div class="project-links">
-                                    <a href="#" class="project-btn">View Details</a>
-                                    <a href="#" class="github-link"><i class="fab fa-github"></i></a>
-                                </div>
-                                <div class="last-updated">
-                                    <small>Last updated: <span class="update-time">1 week ago</span></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="projects-grid" id="projects-grid">
+                <!-- Projects will be loaded dynamically from Firebase -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading projects...</p>
                 </div>
             </div>
             <div class="view-all-container" data-aos="fade-up">
@@ -240,97 +148,11 @@
                 <button class="filter-btn" data-filter="data-science">Data Science</button>
                 <button class="filter-btn" data-filter="robotics">Robotics</button>
             </div>
-            <div class="skills-grid">
-                <!-- Skill Card 1 -->
-                <div class="skill-card" data-category="engineering data-science" data-aos="fade-up" data-aos-delay="100">
-                    <div class="skill-card-inner">
-                        <div class="skill-card-front">
-                            <div class="skill-icon">
-                                <i class="fab fa-python"></i>
-                            </div>
-                            <h3>Python</h3>
-                        </div>
-                        <div class="skill-card-back">
-                            <div class="skill-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <p>Built 10+ ML models and automation systems</p>
-                            <div class="experience-years">5+ years</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Skill Card 2 -->
-                <div class="skill-card" data-category="engineering" data-aos="fade-up" data-aos-delay="200">
-                    <div class="skill-card-inner">
-                        <div class="skill-card-front">
-                            <div class="skill-icon">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            <h3>Structural Analysis</h3>
-                        </div>
-                        <div class="skill-card-back">
-                            <div class="skill-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                            <p>Designed 5 major building structures</p>
-                            <div class="experience-years">4+ years</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Skill Card 3 -->
-                <div class="skill-card" data-category="data-science" data-aos="fade-up" data-aos-delay="300">
-                    <div class="skill-card-inner">
-                        <div class="skill-card-front">
-                            <div class="skill-icon">
-                                <i class="fas fa-brain"></i>
-                            </div>
-                            <h3>Machine Learning</h3>
-                        </div>
-                        <div class="skill-card-back">
-                            <div class="skill-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                            <p>Developed predictive models with 90%+ accuracy</p>
-                            <div class="experience-years">3+ years</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Skill Card 4 -->
-                <div class="skill-card" data-category="robotics" data-aos="fade-up" data-aos-delay="400">
-                    <div class="skill-card-inner">
-                        <div class="skill-card-front">
-                            <div class="skill-icon">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <h3>ROS</h3>
-                        </div>
-                        <div class="skill-card-back">
-                            <div class="skill-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                            <p>Built 3 autonomous robot prototypes</p>
-                            <div class="experience-years">2+ years</div>
-                        </div>
-                    </div>
+            <div class="skills-grid" id="skills-grid">
+                <!-- Skills will be loaded dynamically from Firebase -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading skills...</p>
                 </div>
             </div>
         </div>
@@ -344,65 +166,11 @@
                 <h2>Experience & Education</h2>
                 <p>My professional journey and academic background</p>
             </div>
-            <div class="timeline">
-                <!-- Timeline Item 1 -->
-                <div class="timeline-item" data-aos="fade-right">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">2022 - Present</div>
-                        <h3>Senior Data Scientist</h3>
-                        <h4>TechInnovate Inc.</h4>
-                        <p>Leading a team of 5 data scientists in developing predictive models for urban infrastructure planning. Implemented ML solutions that improved efficiency by 35%.</p>
-                        <div class="timeline-tags">
-                            <span>Machine Learning</span>
-                            <span>Team Leadership</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Timeline Item 2 -->
-                <div class="timeline-item" data-aos="fade-left">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">2020 - 2022</div>
-                        <h3>Structural Engineer</h3>
-                        <h4>BuildWell Engineering</h4>
-                        <p>Designed and analyzed structural components for commercial buildings. Developed automated tools that reduced design time by 25%.</p>
-                        <div class="timeline-tags">
-                            <span>Structural Analysis</span>
-                            <span>AutoCAD</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Timeline Item 3 -->
-                <div class="timeline-item" data-aos="fade-right">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">2019 - 2020</div>
-                        <h3>MSc in Data Science</h3>
-                        <h4>Tech University</h4>
-                        <p>Graduated with distinction. Thesis on "Machine Learning Applications in Structural Engineering" received academic excellence award.</p>
-                        <div class="timeline-tags">
-                            <span>Academic Research</span>
-                            <span>Data Analysis</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Timeline Item 4 -->
-                <div class="timeline-item" data-aos="fade-left">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">2015 - 2019</div>
-                        <h3>BSc in Civil Engineering</h3>
-                        <h4>Engineering Institute</h4>
-                        <p>Graduated summa cum laude. Led the university robotics team to national championship.</p>
-                        <div class="timeline-tags">
-                            <span>Engineering Fundamentals</span>
-                            <span>Robotics Team</span>
-                        </div>
-                    </div>
+            <div class="timeline" id="experience-timeline">
+                <!-- Experience will be loaded dynamically from Firebase -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading experience...</p>
                 </div>
             </div>
         </div>
@@ -416,51 +184,32 @@
                 <h2>Latest Blog Posts</h2>
                 <p>Thoughts, tutorials, and insights from my experience</p>
             </div>
-            <div class="blog-grid">
-                <!-- Blog Card 1 -->
-                <div class="blog-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="blog-img">
-                        <img src="https://via.placeholder.com/600x400" alt="Blog 1">
-                        <div class="blog-category">Robotics</div>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-date">May 5, 2025</div>
-                        <h3>Building Autonomous Robots with ROS and TensorFlow</h3>
-                        <p>A comprehensive guide to integrating machine learning models with robotic operating systems.</p>
-                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <!-- Blog Card 2 -->
-                <div class="blog-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="blog-img">
-                        <img src="https://via.placeholder.com/600x400" alt="Blog 2">
-                        <div class="blog-category">Data Science</div>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-date">April 22, 2025</div>
-                        <h3>Predictive Modeling for Urban Infrastructure</h3>
-                        <p>How data science is revolutionizing the way we design and maintain city infrastructure.</p>
-                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <!-- Blog Card 3 -->
-                <div class="blog-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="blog-img">
-                        <img src="https://via.placeholder.com/600x400" alt="Blog 3">
-                        <div class="blog-category">Engineering</div>
-                    </div>
-                    <div class="blog-content">
-                        <div class="blog-date">April 10, 2025</div>
-                        <h3>From Civil Engineer to Data Scientist: My Journey</h3>
-                        <p>Personal insights and lessons learned during my transition between fields.</p>
-                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                    </div>
+            <div class="blog-grid" id="blog-grid">
+                <!-- Blog posts will be loaded dynamically from Firebase -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading blog posts...</p>
                 </div>
             </div>
             <div class="view-all-container" data-aos="fade-up">
                 <a href="#" class="view-all-btn">View All Posts <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- LinkedIn Posts Section -->
+    <section id="linkedin" class="linkedin-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>LinkedIn Updates</h2>
+                <p>Stay connected with my latest professional insights</p>
+            </div>
+            <div class="linkedin-feed" id="linkedin-feed" data-aos="fade-up">
+                <!-- LinkedIn posts will be loaded dynamically from Firebase -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading LinkedIn posts...</p>
+                </div>
             </div>
         </div>
     </section>
@@ -540,6 +289,7 @@
                     <a href="#skills">Skills</a>
                     <a href="#experience">Experience</a>
                     <a href="#blog">Blog</a>
+                    <a href="#linkedin">LinkedIn</a>
                     <a href="#contact">Contact</a>
                 </div>
                 <div class="footer-social">
@@ -567,6 +317,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     <script src="mainpage.js"></script>
 </body>
 </html>
