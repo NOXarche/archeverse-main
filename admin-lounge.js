@@ -251,7 +251,10 @@ function initModals() {
     const modals = document.querySelectorAll('.admin-modal');
     const modalTriggers = {
         'add-project-btn': 'add-project-modal',
-        'add-admin-btn': 'add-admin-modal'
+        'add-admin-btn': 'add-admin-modal',
+        'add-skill-btn': 'add-skill-modal',
+        'add-blog-btn': 'add-blog-modal',
+        'add-design-btn': 'add-design-modal'
     };
     
     // Setup modal triggers
@@ -259,7 +262,7 @@ function initModals() {
         const trigger = document.getElementById(triggerId);
         const modalId = modalTriggers[triggerId];
         
-        if (trigger) {
+        if (trigger && document.getElementById(modalId)) {
             trigger.addEventListener('click', function() {
                 document.getElementById(modalId).style.display = 'block';
                 document.body.style.overflow = 'hidden';
@@ -355,25 +358,27 @@ function initFormSubmissions() {
             // Get form values
             const email = document.getElementById('admin-email').value;
             
-            // Save to Firebase
-            const database = firebase.database();
-            database.ref('admins').push({
-                email: email,
-                addedAt: Date.now()
-            })
-            .then(() => {
-                // Close modal and reset form
-                document.getElementById('add-admin-modal').style.display = 'none';
-                document.body.style.overflow = '';
-                addAdminForm.reset();
-                
-                // Refresh users list
-                loadUsers();
-            })
-            .catch(error => {
-                console.error("Error adding admin:", error);
-                alert(`Failed to add admin: ${error.message}`);
-            });
+            // Call the Cloud Function to set admin privileges
+            const functions = firebase.functions();
+            const addAdminRole = functions.httpsCallable('addAdminRole');
+            
+            addAdminRole({ email: email })
+                .then(result => {
+                    console.log(result);
+                    alert(`Success! ${email} has been made an admin.`);
+                    
+                    // Close modal and reset form
+                    document.getElementById('add-admin-modal').style.display = 'none';
+                    document.body.style.overflow = '';
+                    addAdminForm.reset();
+                    
+                    // Refresh users list
+                    loadUsers();
+                })
+                .catch(error => {
+                    console.error("Error adding admin:", error);
+                    alert(`Failed to add admin: ${error.message}`);
+                });
         });
     }
 }
@@ -404,9 +409,12 @@ function initFirebaseAndCheckAdmin() {
         const accessDenied = document.getElementById('access-denied');
         
         if (user) {
-            // User is signed in, now check if they're an admin
-            checkIfAdmin(user.uid, user.email)
-                .then(isAdmin => {
+            // User is signed in, now check if they're an admin using token claims
+            user.getIdTokenResult()
+                .then(idTokenResult => {
+                    // Check if the user has admin claim
+                    const isAdmin = idTokenResult.claims.admin === true;
+                    
                     // Hide auth check div
                     authCheckDiv.style.display = 'none';
                     
@@ -419,13 +427,32 @@ function initFirebaseAndCheckAdmin() {
                         // Load admin data
                         loadAdminData();
                     } else {
-                        // Show access denied
-                        accessDenied.style.display = 'block';
+                        // If no admin claim, check the database as a fallback
+                        checkAdminInDatabase(user.uid, user.email)
+                            .then(isDbAdmin => {
+                                if (isDbAdmin) {
+                                    // Show admin sections
+                                    adminDashboard.style.display = 'block';
+                                    contentManagement.style.display = 'block';
+                                    userManagement.style.display = 'block';
+                                    
+                                    // Load admin data
+                                    loadAdminData();
+                                } else {
+                                    // Show access denied
+                                    accessDenied.style.display = 'block';
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error checking admin in database:", error);
+                                accessDenied.style.display = 'block';
+                            });
                     }
                 })
                 .catch(error => {
                     console.error("Error checking admin status:", error);
                     authCheckDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+                    accessDenied.style.display = 'block';
                 });
             
             // Setup logout button
@@ -449,8 +476,8 @@ function initFirebaseAndCheckAdmin() {
     });
 }
 
-// Check if user is an admin
-function checkIfAdmin(uid, email) {
+// Check if user is an admin in the database (fallback method)
+function checkAdminInDatabase(uid, email) {
     return new Promise((resolve, reject) => {
         // Check in the admins collection by user ID
         firebase.database().ref('admins').orderByChild('uid').equalTo(uid).once('value')
@@ -484,7 +511,9 @@ function loadAdminData() {
     loadStats();
     loadProjects();
     loadUsers();
-    // Add other data loading functions as needed
+    loadSkills();
+    loadBlogPosts();
+    loadDesigns();
 }
 
 // Load stats for admin dashboard
@@ -586,6 +615,204 @@ function loadProjects() {
         });
 }
 
+// Load skills for content management
+function loadSkills() {
+    const skillsList = document.getElementById('skills-list');
+    if (!skillsList) return;
+    
+    // Show loading spinner
+    skillsList.innerHTML = `
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading skills...</p>
+        </div>
+    `;
+    
+    const database = firebase.database();
+    database.ref('skills').once('value')
+        .then(snapshot => {
+            // Clear loading spinner
+            skillsList.innerHTML = '';
+            
+            if (!snapshot.exists()) {
+                skillsList.innerHTML = '<p>No skills found. Add your first skill!</p>';
+                return;
+            }
+            
+            // Display skills
+            const skills = snapshot.val();
+            Object.keys(skills).forEach(key => {
+                const skill = skills[key];
+                const skillItem = document.createElement('div');
+                skillItem.className = 'content-item';
+                skillItem.innerHTML = `
+                    <div class="content-item-details">
+                        <div class="content-item-title">${skill.name}</div>
+                        <div class="content-item-meta">
+                            Category: ${skill.category} • 
+                            Experience: ${skill.experience} years
+                        </div>
+                    </div>
+                    <div class="content-item-actions">
+                        <button class="action-btn edit-btn" data-id="${key}"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" data-id="${key}"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                skillsList.appendChild(skillItem);
+                
+                // Add event listeners for buttons
+                const editBtn = skillItem.querySelector('.edit-btn');
+                const deleteBtn = skillItem.querySelector('.delete-btn');
+                
+                editBtn.addEventListener('click', function() {
+                    // Implement skill editing
+                });
+                
+                deleteBtn.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to delete this skill?')) {
+                        // Implement skill deletion
+                    }
+                });
+            });
+        })
+        .catch(error => {
+            console.error("Error loading skills:", error);
+            skillsList.innerHTML = `<p>Error loading skills: ${error.message}</p>`;
+        });
+}
+
+// Load blog posts for content management
+function loadBlogPosts() {
+    const blogList = document.getElementById('blog-list');
+    if (!blogList) return;
+    
+    // Show loading spinner
+    blogList.innerHTML = `
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading blog posts...</p>
+        </div>
+    `;
+    
+    const database = firebase.database();
+    database.ref('blog').once('value')
+        .then(snapshot => {
+            // Clear loading spinner
+            blogList.innerHTML = '';
+            
+            if (!snapshot.exists()) {
+                blogList.innerHTML = '<p>No blog posts found. Add your first post!</p>';
+                return;
+            }
+            
+            // Display blog posts
+            const posts = snapshot.val();
+            Object.keys(posts).forEach(key => {
+                const post = posts[key];
+                const postItem = document.createElement('div');
+                postItem.className = 'content-item';
+                postItem.innerHTML = `
+                    <div class="content-item-details">
+                        <div class="content-item-title">${post.title}</div>
+                        <div class="content-item-meta">
+                            Category: ${post.category} • 
+                            Published: ${formatDate(post.publishDate)}
+                        </div>
+                    </div>
+                    <div class="content-item-actions">
+                        <button class="action-btn edit-btn" data-id="${key}"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" data-id="${key}"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                blogList.appendChild(postItem);
+                
+                // Add event listeners for buttons
+                const editBtn = postItem.querySelector('.edit-btn');
+                const deleteBtn = postItem.querySelector('.delete-btn');
+                
+                editBtn.addEventListener('click', function() {
+                    // Implement blog post editing
+                });
+                
+                deleteBtn.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to delete this blog post?')) {
+                        // Implement blog post deletion
+                    }
+                });
+            });
+        })
+        .catch(error => {
+            console.error("Error loading blog posts:", error);
+            blogList.innerHTML = `<p>Error loading blog posts: ${error.message}</p>`;
+        });
+}
+
+// Load designs for content management
+function loadDesigns() {
+    const designList = document.getElementById('design-list');
+    if (!designList) return;
+    
+    // Show loading spinner
+    designList.innerHTML = `
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading designs...</p>
+        </div>
+    `;
+    
+    const database = firebase.database();
+    database.ref('designs').once('value')
+        .then(snapshot => {
+            // Clear loading spinner
+            designList.innerHTML = '';
+            
+            if (!snapshot.exists()) {
+                designList.innerHTML = '<p>No designs found. Add your first design!</p>';
+                return;
+            }
+            
+            // Display designs
+            const designs = snapshot.val();
+            Object.keys(designs).forEach(key => {
+                const design = designs[key];
+                const designItem = document.createElement('div');
+                designItem.className = 'content-item';
+                designItem.innerHTML = `
+                    <div class="content-item-details">
+                        <div class="content-item-title">${design.title}</div>
+                        <div class="content-item-meta">
+                            Category: ${design.category} • 
+                            Created: ${formatDate(design.createdAt)}
+                        </div>
+                    </div>
+                    <div class="content-item-actions">
+                        <button class="action-btn edit-btn" data-id="${key}"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" data-id="${key}"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                designList.appendChild(designItem);
+                
+                // Add event listeners for buttons
+                const editBtn = designItem.querySelector('.edit-btn');
+                const deleteBtn = designItem.querySelector('.delete-btn');
+                
+                editBtn.addEventListener('click', function() {
+                    // Implement design editing
+                });
+                
+                deleteBtn.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to delete this design?')) {
+                        // Implement design deletion
+                    }
+                });
+            });
+        })
+        .catch(error => {
+            console.error("Error loading designs:", error);
+            designList.innerHTML = `<p>Error loading designs: ${error.message}</p>`;
+        });
+}
+
 // Load users for user management
 function loadUsers() {
     const usersTableBody = document.getElementById('users-table-body');
@@ -603,29 +830,30 @@ function loadUsers() {
         </tr>
     `;
     
-    // Get admins list first
+    // Get users from Firebase Authentication (requires Admin SDK on server)
+    // For this client-side implementation, we'll use the users collection in the database
     const database = firebase.database();
-    database.ref('admins').once('value')
-        .then(adminsSnapshot => {
-            const admins = adminsSnapshot.val() || {};
+    database.ref('users').once('value')
+        .then(snapshot => {
+            // Clear loading spinner
+            usersTableBody.innerHTML = '';
             
-            // Then get users
-            return database.ref('users').once('value')
-                .then(usersSnapshot => {
-                    // Clear loading spinner
-                    usersTableBody.innerHTML = '';
-                    
-                    if (!usersSnapshot.exists()) {
-                        usersTableBody.innerHTML = `
-                            <tr>
-                                <td colspan="5">No users found.</td>
-                            </tr>
-                        `;
-                        return;
-                    }
+            if (!snapshot.exists()) {
+                usersTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5">No users found.</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Get admin users to check roles
+            return database.ref('admins').once('value')
+                .then(adminsSnapshot => {
+                    const admins = adminsSnapshot.val() || {};
                     
                     // Display users
-                    const users = usersSnapshot.val();
+                    const users = snapshot.val();
                     Object.keys(users).forEach(key => {
                         const user = users[key];
                         
@@ -704,48 +932,66 @@ function deleteProject(projectId) {
 }
 
 function makeAdmin(userId, email) {
-    const database = firebase.database();
-    database.ref('admins').push({
-        uid: userId,
-        email: email,
-        addedAt: Date.now()
-    })
-    .then(() => {
-        console.log("Admin privileges granted");
-        loadUsers(); // Refresh the users list
-    })
-    .catch(error => {
-        console.error("Error granting admin privileges:", error);
-        alert(`Failed to grant admin privileges: ${error.message}`);
-    });
+    // Call the Cloud Function to set admin privileges
+    const functions = firebase.functions();
+    const addAdminRole = functions.httpsCallable('addAdminRole');
+    
+    addAdminRole({ email: email })
+        .then(result => {
+            console.log(result);
+            alert(`Success! ${email} has been made an admin.`);
+            
+            // Also update the local database for backward compatibility
+            const database = firebase.database();
+            database.ref('admins').push({
+                uid: userId,
+                email: email,
+                addedAt: Date.now()
+            });
+            
+            // Refresh users list
+            loadUsers();
+        })
+        .catch(error => {
+            console.error("Error granting admin privileges:", error);
+            alert(`Failed to grant admin privileges: ${error.message}`);
+        });
 }
 
 function removeAdmin(userId, email) {
-    const database = firebase.database();
+    // Call the Cloud Function to remove admin privileges
+    const functions = firebase.functions();
+    const removeAdminRole = functions.httpsCallable('removeAdminRole');
     
-    // Find the admin entry to remove
-    database.ref('admins').orderByChild('uid').equalTo(userId).once('value')
-        .then(snapshot => {
-            if (snapshot.exists()) {
-                // Remove by user ID
-                const adminKey = Object.keys(snapshot.val())[0];
-                return database.ref(`admins/${adminKey}`).remove();
-            } else {
-                // Try to find by email
-                return database.ref('admins').orderByChild('email').equalTo(email).once('value')
-                    .then(emailSnapshot => {
-                        if (emailSnapshot.exists()) {
-                            const adminKey = Object.keys(emailSnapshot.val())[0];
-                            return database.ref(`admins/${adminKey}`).remove();
-                        } else {
-                            throw new Error("Admin record not found");
-                        }
-                    });
-            }
-        })
-        .then(() => {
-            console.log("Admin privileges removed");
-            loadUsers(); // Refresh the users list
+    removeAdminRole({ email: email })
+        .then(result => {
+            console.log(result);
+            alert(`Success! Admin privileges removed from ${email}.`);
+            
+            // Also update the local database for backward compatibility
+            const database = firebase.database();
+            
+            // Find the admin entry to remove
+            database.ref('admins').orderByChild('uid').equalTo(userId).once('value')
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        // Remove by user ID
+                        const adminKey = Object.keys(snapshot.val())[0];
+                        return database.ref(`admins/${adminKey}`).remove();
+                    } else {
+                        // Try to find by email
+                        return database.ref('admins').orderByChild('email').equalTo(email).once('value')
+                            .then(emailSnapshot => {
+                                if (emailSnapshot.exists()) {
+                                    const adminKey = Object.keys(emailSnapshot.val())[0];
+                                    return database.ref(`admins/${adminKey}`).remove();
+                                }
+                            });
+                    }
+                });
+            
+            // Refresh users list
+            loadUsers();
         })
         .catch(error => {
             console.error("Error removing admin privileges:", error);
