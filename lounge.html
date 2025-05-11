@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Archeverse Admin Lounge | Content Management</title>
-    <link rel="stylesheet" href="lounge.css">
+    <title>Archeverse | Admin Lounge</title>
+    <link rel="stylesheet" href="mainpage.css">
+    <link rel="stylesheet" href="admin-lounge.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -12,672 +13,281 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- AOS for scroll animations -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- GSAP for advanced animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
 </head>
-<body class="admin-lounge">
-    <!-- Admin Authentication Overlay -->
-    <div class="auth-overlay" id="auth-overlay">
-        <div class="auth-container">
-            <div class="auth-logo">
-                <svg class="logo-svg" width="60" height="60" viewBox="0 0 80 80">
-                    <path class="logo-path" d="M40,5 L75,30 L75,70 L40,95 L5,70 L5,30 L40,5 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
-                    <path class="logo-path-inner" d="M40,15 L65,35 L65,65 L40,85 L15,65 L15,35 L40,15 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
-                    <path class="logo-path-center" d="M40,25 L55,40 L55,60 L40,75 L25,60 L25,40 L40,25 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
-                </svg>
-                <h2>Archeverse Admin</h2>
-            </div>
-            <div class="auth-form">
-                <div class="form-group">
-                    <label for="admin-email">Admin Email</label>
-                    <input type="email" id="admin-email" placeholder="Enter your admin email">
+<body>
+    <!-- Enhanced Animated Background with Interactive Particles -->
+    <div class="animated-background">
+        <div class="gradient-sphere sphere-1"></div>
+        <div class="gradient-sphere sphere-2"></div>
+        <div class="gradient-sphere sphere-3"></div>
+        <div class="gradient-sphere sphere-4"></div>
+        <div class="gradient-sphere sphere-5"></div>
+        <div class="particles-container" id="interactive-particles"></div>
+        <div class="stars-container"></div>
+        <div class="grid-overlay"></div>
+        <canvas id="flow-field" class="flow-field-canvas"></canvas>
+    </div>
+
+    <!-- Theme Toggle with Enhanced Animation -->
+    <div class="theme-toggle">
+        <button id="theme-toggle-btn" class="pulse-effect">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+            <span class="ripple-effect"></span>
+        </button>
+    </div>
+
+    <!-- Enhanced Navigation Bar with Dropdown Menus -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <a href="index.html"><span class="highlight">Arche</span>verse</a>
                 </div>
-                <div class="form-group">
-                    <label for="admin-password">Password</label>
-                    <input type="password" id="admin-password" placeholder="Enter your password">
+                <div class="nav-links" id="nav-links">
+                    <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                    <a href="#" class="nav-link active"><i class="fas fa-user-shield"></i> Admin Lounge</a>
+                    <a href="#" id="logout-btn" class="login-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
-                <button id="login-button" class="primary-btn">
-                    <span>Login</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-                <div class="auth-message" id="auth-message"></div>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
+        </div>
+    </nav>
+
+    <!-- Admin Authentication Check -->
+    <div id="admin-auth-check" class="container">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Verifying admin privileges...</p>
         </div>
     </div>
 
-    <!-- Admin Dashboard -->
-    <div class="admin-dashboard" id="admin-dashboard">
-        <!-- Sidebar Navigation -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <svg class="logo-svg" width="40" height="40" viewBox="0 0 80 80">
-                        <path class="logo-path" d="M40,5 L75,30 L75,70 L40,95 L5,70 L5,30 L40,5 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
-                        <path class="logo-path-inner" d="M40,15 L65,35 L65,65 L40,85 L15,65 L15,35 L40,15 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
-                        <path class="logo-path-center" d="M40,25 L55,40 L55,60 L40,75 L25,60 L25,40 L40,25 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
-                    </svg>
-                    <span>Archeverse</span>
+    <!-- Admin Dashboard (Hidden until admin is verified) -->
+    <section id="admin-dashboard" class="admin-section" style="display: none;">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Admin Dashboard</h2>
+                <p>Manage your website content and user permissions</p>
+            </div>
+            
+            <div class="admin-stats" data-aos="fade-up">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-number" id="users-count">0</div>
+                    <div class="stat-label">Total Users</div>
                 </div>
-                <button class="sidebar-toggle" id="sidebar-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-            <div class="sidebar-menu">
-                <ul>
-                    <li class="active" data-section="dashboard">
-                        <a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                    </li>
-                    <li data-section="projects">
-                        <a href="#projects"><i class="fas fa-rocket"></i> Projects</a>
-                    </li>
-                    <li data-section="skills">
-                        <a href="#skills"><i class="fas fa-tools"></i> Skills</a>
-                    </li>
-                    <li data-section="experience">
-                        <a href="#experience"><i class="fas fa-briefcase"></i> Experience</a>
-                    </li>
-                    <li data-section="blog">
-                        <a href="#blog"><i class="fas fa-pen"></i> Blog Posts</a>
-                    </li>
-                    <li data-section="design">
-                        <a href="#design"><i class="fas fa-palette"></i> Design Showcase</a>
-                    </li>
-                    <li data-section="messages">
-                        <a href="#messages"><i class="fas fa-envelope"></i> Messages</a>
-                    </li>
-                    <li data-section="settings">
-                        <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
-                    </li>
-                </ul>
-            </div>
-            <div class="sidebar-footer">
-                <a href="index.html" class="view-site-btn"><i class="fas fa-eye"></i> View Site</a>
-                <a href="levelling.html" class="levelling-btn"><i class="fas fa-level-up-alt"></i> Enter The Levelling Era</a>
-                <button id="logout-button" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-rocket"></i></div>
+                    <div class="stat-number" id="projects-count">0</div>
+                    <div class="stat-label">Projects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+                    <div class="stat-number" id="messages-count">0</div>
+                    <div class="stat-label">Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-eye"></i></div>
+                    <div class="stat-number" id="visitors-count">0</div>
+                    <div class="stat-label">Visitors</div>
+                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Main Content Area -->
-        <div class="main-content">
-            <div class="top-bar">
-                <div class="search-container">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search...">
-                </div>
-                <div class="user-menu">
-                    <div class="notifications">
-                        <i class="fas fa-bell"></i>
-                        <span class="badge">3</span>
-                    </div>
-                    <div class="admin-profile">
-                        <div class="admin-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <span id="admin-name">Admin User</span>
-                    </div>
-                </div>
+    <!-- Content Management Section -->
+    <section id="content-management" class="admin-section" style="display: none;">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Content Management</h2>
+                <p>Add, edit, or remove website content</p>
             </div>
-
-            <!-- Dashboard Section -->
-            <section id="dashboard-section" class="content-section active">
-                <div class="section-header">
-                    <h2>Dashboard</h2>
-                    <p>Overview of your website's performance and content</p>
+            
+            <div class="admin-tabs" data-aos="fade-up">
+                <button class="tab-btn active" data-tab="projects"><i class="fas fa-rocket"></i> Projects</button>
+                <button class="tab-btn" data-tab="skills"><i class="fas fa-tools"></i> Skills</button>
+                <button class="tab-btn" data-tab="blog"><i class="fas fa-pen"></i> Blog Posts</button>
+                <button class="tab-btn" data-tab="design"><i class="fas fa-palette"></i> Design Showcase</button>
+            </div>
+            
+            <div class="tab-content" id="projects-tab">
+                <div class="content-header">
+                    <h3>Manage Projects</h3>
+                    <button class="add-btn" id="add-project-btn"><i class="fas fa-plus"></i> Add New Project</button>
                 </div>
                 
-                <div class="stats-cards">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Visitors</h3>
-                            <div class="stat-value" id="visitor-count">1,024</div>
-                            <div class="stat-change positive">+12% from last week</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-rocket"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Projects</h3>
-                            <div class="stat-value" id="project-count">12</div>
-                            <div class="stat-change positive">+2 new</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Messages</h3>
-                            <div class="stat-value" id="message-count">8</div>
-                            <div class="stat-change negative">3 unread</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-pen"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Blog Posts</h3>
-                            <div class="stat-value" id="blog-count">5</div>
-                            <div class="stat-change neutral">Last post 3 days ago</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="dashboard-grid">
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h3>Recent Messages</h3>
-                            <a href="#messages" class="view-all">View All</a>
-                        </div>
-                        <div class="recent-messages" id="recent-messages">
-                            <div class="loading-spinner">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <p>Loading messages...</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h3>Quick Actions</h3>
-                        </div>
-                        <div class="quick-actions">
-                            <button class="action-btn" data-section="projects" data-action="add">
-                                <i class="fas fa-plus"></i>
-                                <span>Add Project</span>
-                            </button>
-                            <button class="action-btn" data-section="blog" data-action="add">
-                                <i class="fas fa-plus"></i>
-                                <span>New Blog Post</span>
-                            </button>
-                            <button class="action-btn" data-section="design" data-action="add">
-                                <i class="fas fa-plus"></i>
-                                <span>Add Design</span>
-                            </button>
-                            <button class="action-btn" data-section="skills" data-action="add">
-                                <i class="fas fa-plus"></i>
-                                <span>Add Skill</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Projects Section -->
-            <section id="projects-section" class="content-section">
-                <div class="section-header">
-                    <h2>Projects</h2>
-                    <p>Manage your portfolio projects</p>
-                    <button class="add-new-btn" data-section="projects" data-action="add">
-                        <i class="fas fa-plus"></i> Add New Project
-                    </button>
-                </div>
-                
-                <div class="projects-list" id="projects-list">
+                <div class="content-list" id="projects-list">
                     <div class="loading-spinner">
                         <i class="fas fa-spinner fa-spin"></i>
                         <p>Loading projects...</p>
                     </div>
                 </div>
-                
-                <!-- Project Form Modal -->
-                <div class="modal" id="project-modal">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 id="project-modal-title">Add New Project</h3>
-                            <button class="close-modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="project-form">
-                                <input type="hidden" id="project-id">
-                                <div class="form-group">
-                                    <label for="project-title">Project Title</label>
-                                    <input type="text" id="project-title" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-description">Description</label>
-                                    <textarea id="project-description" rows="4" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-technologies">Technologies (comma separated)</label>
-                                    <input type="text" id="project-technologies" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-image">Project Image</label>
-                                    <div class="file-upload">
-                                        <input type="file" id="project-image" accept="image/*">
-                                        <div class="file-upload-label">
-                                            <i class="fas fa-cloud-upload-alt"></i>
-                                            <span>Choose a file or drag it here</span>
-                                        </div>
-                                        <div class="file-preview" id="project-image-preview"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-details-url">Details URL</label>
-                                    <input type="url" id="project-details-url">
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-github-url">GitHub URL</label>
-                                    <input type="url" id="project-github-url">
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-status">Status</label>
-                                    <select id="project-status" required>
-                                        <option value="development">In Development</option>
-                                        <option value="live">Live</option>
-                                        <option value="archived">Archived</option>
-                                    </select>
-                                </div>
-                                <div class="form-actions">
-                                    <button type="button" class="secondary-btn" id="cancel-project">Cancel</button>
-                                    <button type="submit" class="primary-btn">Save Project</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            </div>
+            
+            <div class="tab-content" id="skills-tab" style="display: none;">
+                <!-- Skills management content -->
+            </div>
+            
+            <div class="tab-content" id="blog-tab" style="display: none;">
+                <!-- Blog management content -->
+            </div>
+            
+            <div class="tab-content" id="design-tab" style="display: none;">
+                <!-- Design showcase management content -->
+            </div>
+        </div>
+    </section>
 
-            <!-- Skills Section -->
-            <section id="skills-section" class="content-section">
-                <div class="section-header">
-                    <h2>Skills</h2>
-                    <p>Manage your skills and expertise</p>
-                    <button class="add-new-btn" data-section="skills" data-action="add">
-                        <i class="fas fa-plus"></i> Add New Skill
-                    </button>
+    <!-- User Management Section -->
+    <section id="user-management" class="admin-section" style="display: none;">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>User Management</h2>
+                <p>Manage user accounts and admin privileges</p>
+            </div>
+            
+            <div class="admin-controls" data-aos="fade-up">
+                <div class="search-box">
+                    <input type="text" id="user-search" placeholder="Search users...">
+                    <button><i class="fas fa-search"></i></button>
                 </div>
-                
-                <div class="skills-list" id="skills-list">
-                    <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading skills...</p>
-                    </div>
-                </div>
-                
-                <!-- Skill Form Modal -->
-                <div class="modal" id="skill-modal">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 id="skill-modal-title">Add New Skill</h3>
-                            <button class="close-modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="skill-form">
-                                <input type="hidden" id="skill-id">
-                                <div class="form-group">
-                                    <label for="skill-name">Skill Name</label>
-                                    <input type="text" id="skill-name" required>
+                <button class="add-btn" id="add-admin-btn"><i class="fas fa-user-plus"></i> Add Admin</button>
+            </div>
+            
+            <div class="users-table-container" data-aos="fade-up">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Last Login</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <tr>
+                            <td colspan="5" class="loading-cell">
+                                <div class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Loading users...</p>
                                 </div>
-                                <div class="form-group">
-                                    <label for="skill-icon">Icon (Font Awesome class)</label>
-                                    <input type="text" id="skill-icon" placeholder="fas fa-code" required>
-                                    <div class="icon-preview">
-                                        <i id="skill-icon-preview" class="fas fa-code"></i>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="skill-rating">Rating (1-5)</label>
-                                    <input type="range" id="skill-rating" min="1" max="5" value="3" required>
-                                    <div class="rating-preview">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="skill-description">Description</label>
-                                    <textarea id="skill-description" rows="3" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="skill-experience">Experience</label>
-                                    <input type="text" id="skill-experience" placeholder="e.g. 3+ years" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Categories</label>
-                                    <div class="checkbox-group">
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" name="skill-category" value="engineering"> Engineering
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" name="skill-category" value="data-science"> Data Science
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" name="skill-category" value="robotics"> Robotics
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" name="skill-category" value="design"> Design
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-actions">
-                                    <button type="button" class="secondary-btn" id="cancel-skill">Cancel</button>
-                                    <button type="submit" class="primary-btn">Save Skill</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
-            <!-- Experience Section -->
-            <section id="experience-section" class="content-section">
-                <div class="section-header">
-                    <h2>Experience & Education</h2>
-                    <p>Manage your professional experience and education</p>
-                    <button class="add-new-btn" data-section="experience" data-action="add">
-                        <i class="fas fa-plus"></i> Add New Entry
-                    </button>
+    <!-- Access Denied Section -->
+    <section id="access-denied" class="access-denied-section" style="display: none;">
+        <div class="container">
+            <div class="access-denied-content">
+                <div class="access-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
                 </div>
-                
-                <div class="experience-list" id="experience-list">
-                    <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading experience entries...</p>
-                    </div>
-                </div>
-                
-                <!-- Experience Form Modal -->
-                <div class="modal" id="experience-modal">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 id="experience-modal-title">Add New Experience</h3>
-                            <button class="close-modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="experience-form">
-                                <input type="hidden" id="experience-id">
-                                <div class="form-group">
-                                    <label for="experience-type">Type</label>
-                                    <select id="experience-type" required>
-                                        <option value="job">Job</option>
-                                        <option value="education">Education</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="experience-period">Period</label>
-                                    <input type="text" id="experience-period" placeholder="e.g. 2020 - Present" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="experience-title">Title</label>
-                                    <input type="text" id="experience-title" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="experience-company">Company/Institution</label>
-                                    <input type="text" id="experience-company" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="experience-description">Description</label>
-                                    <textarea id="experience-description" rows="4" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="experience-tags">Tags (comma separated)</label>
-                                    <input type="text" id="experience-tags" required>
-                                </div>
-                                <div class="form-actions">
-                                    <button type="button" class="secondary-btn" id="cancel-experience">Cancel</button>
-                                    <button type="submit" class="primary-btn">Save Entry</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                <h2>Access Denied</h2>
+                <p>You don't have permission to access the Admin Lounge. Please contact the administrator if you believe this is an error.</p>
+                <a href="index.html" class="primary-btn"><i class="fas fa-home"></i> Back to Home</a>
+            </div>
+        </div>
+    </section>
 
-            <!-- Blog Posts Section -->
-            <section id="blog-section" class="content-section">
-                <div class="section-header">
-                    <h2>Blog Posts</h2>
-                    <p>Manage your blog content</p>
-                    <button class="add-new-btn" data-section="blog" data-action="add">
-                        <i class="fas fa-plus"></i> Add New Post
-                    </button>
+    <!-- Add Project Modal -->
+    <div id="add-project-modal" class="admin-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Add New Project</h2>
+            <form id="add-project-form">
+                <div class="form-group">
+                    <label for="project-title">Project Title</label>
+                    <input type="text" id="project-title" required>
                 </div>
-                
-                <div class="blog-posts-list" id="blog-posts-list">
-                    <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading blog posts...</p>
-                    </div>
+                <div class="form-group">
+                    <label for="project-description">Description</label>
+                    <textarea id="project-description" rows="4" required></textarea>
                 </div>
-                
-                <!-- Blog Post Form Modal -->
-                <div class="modal" id="blog-modal">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 id="blog-modal-title">Add New Blog Post</h3>
-                            <button class="close-modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="blog-form">
-                                <input type="hidden" id="blog-id">
-                                <div class="form-group">
-                                    <label for="blog-title">Title</label>
-                                    <input type="text" id="blog-title" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="blog-excerpt">Excerpt</label>
-                                    <textarea id="blog-excerpt" rows="3" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="blog-category">Category</label>
-                                    <input type="text" id="blog-category" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="blog-image">Featured Image</label>
-                                    <div class="file-upload">
-                                        <input type="file" id="blog-image" accept="image/*">
-                                        <div class="file-upload-label">
-                                            <i class="fas fa-cloud-upload-alt"></i>
-                                            <span>Choose a file or drag it here</span>
-                                        </div>
-                                        <div class="file-preview" id="blog-image-preview"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="blog-url">Post URL</label>
-                                    <input type="url" id="blog-url">
-                                </div>
-                                <div class="form-group">
-                                    <label for="blog-read-time">Read Time</label>
-                                    <input type="text" id="blog-read-time" placeholder="e.g. 5 min read">
-                                </div>
-                                <div class="form-actions">
-                                    <button type="button" class="secondary-btn" id="cancel-blog">Cancel</button>
-                                    <button type="submit" class="primary-btn">Save Post</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="project-image">Image URL</label>
+                    <input type="text" id="project-image" required>
                 </div>
-            </section>
-
-            <!-- Design Showcase Section -->
-            <section id="design-section" class="content-section">
-                <div class="section-header">
-                    <h2>Design Showcase</h2>
-                    <p>Manage your design portfolio</p>
-                    <button class="add-new-btn" data-section="design" data-action="add">
-                        <i class="fas fa-plus"></i> Add New Design
-                    </button>
+                <div class="form-group">
+                    <label for="project-technologies">Technologies (comma separated)</label>
+                    <input type="text" id="project-technologies" required>
                 </div>
-                
-                <div class="design-list" id="design-list">
-                    <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading designs...</p>
-                    </div>
+                <div class="form-group">
+                    <label for="project-github">GitHub URL</label>
+                    <input type="text" id="project-github">
                 </div>
-                
-                <!-- Design Form Modal -->
-                <div class="modal" id="design-modal">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 id="design-modal-title">Add New Design</h3>
-                            <button class="close-modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="design-form">
-                                <input type="hidden" id="design-id">
-                                <div class="form-group">
-                                    <label for="design-title">Title</label>
-                                    <input type="text" id="design-title" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="design-description">Description</label>
-                                    <textarea id="design-description" rows="3" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="design-category">Category</label>
-                                    <select id="design-category" required>
-                                        <option value="Graphic Design">Graphic Design</option>
-                                        <option value="UI/UX Design">UI/UX Design</option>
-                                        <option value="AutoCAD">AutoCAD</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="design-image">Design Image</label>
-                                    <div class="file-upload">
-                                        <input type="file" id="design-image" accept="image/*">
-                                        <div class="file-upload-label">
-                                            <i class="fas fa-cloud-upload-alt"></i>
-                                            <span>Choose a file or drag it here</span>
-                                        </div>
-                                        <div class="file-preview" id="design-image-preview"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="design-tools">Tools Used (comma separated)</label>
-                                    <input type="text" id="design-tools" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="design-external-url">External URL (optional)</label>
-                                    <input type="url" id="design-external-url">
-                                </div>
-                                <div class="form-actions">
-                                    <button type="button" class="secondary-btn" id="cancel-design">Cancel</button>
-                                    <button type="submit" class="primary-btn">Save Design</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="project-status">Status</label>
+                    <select id="project-status" required>
+                        <option value="live">Live</option>
+                        <option value="development">In Development</option>
+                        <option value="planned">Planned</option>
+                    </select>
                 </div>
-            </section>
-
-            <!-- Messages Section -->
-            <section id="messages-section" class="content-section">
-                <div class="section-header">
-                    <h2>Messages</h2>
-                    <p>View and manage contact form submissions</p>
-                </div>
-                
-                <div class="messages-list" id="messages-list">
-                    <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <p>Loading messages...</p>
-                    </div>
-                </div>
-                
-                <!-- Message Detail Modal -->
-                <div class="modal" id="message-modal">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 id="message-modal-title">Message Details</h3>
-                            <button class="close-modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="message-details">
-                                <div class="message-info">
-                                    <div class="message-sender">
-                                        <strong>From:</strong> <span id="message-sender-name"></span> (<span id="message-sender-email"></span>)
-                                    </div>
-                                    <div class="message-date">
-                                        <strong>Date:</strong> <span id="message-date"></span>
-                                    </div>
-                                    <div class="message-subject">
-                                        <strong>Subject:</strong> <span id="message-subject"></span>
-                                    </div>
-                                </div>
-                                <div class="message-content">
-                                    <strong>Message:</strong>
-                                    <p id="message-content"></p>
-                                </div>
-                                <div class="message-actions">
-                                    <button class="secondary-btn" id="reply-message">
-                                        <i class="fas fa-reply"></i> Reply
-                                    </button>
-                                    <button class="danger-btn" id="delete-message">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Settings Section -->
-            <section id="settings-section" class="content-section">
-                <div class="section-header">
-                    <h2>Settings</h2>
-                    <p>Manage your website settings</p>
-                </div>
-                
-                <div class="settings-container">
-                    <div class="settings-card">
-                        <div class="card-header">
-                            <h3>Current Project</h3>
-                        </div>
-                        <div class="card-body">
-                            <form id="current-project-form">
-                                <div class="form-group">
-                                    <label for="current-project-name">Current Project Name</label>
-                                    <input type="text" id="current-project-name" placeholder="e.g. AI-Powered Robotics Platform">
-                                </div>
-                                <button type="submit" class="primary-btn">Update</button>
-                            </form>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-card">
-                        <div class="card-header">
-                            <h3>Admin Profile</h3>
-                        </div>
-                        <div class="card-body">
-                            <form id="admin-profile-form">
-                                <div class="form-group">
-                                    <label for="admin-display-name">Display Name</label>
-                                    <input type="text" id="admin-display-name">
-                                </div>
-                                <div class="form-group">
-                                    <label for="admin-email-update">Email</label>
-                                    <input type="email" id="admin-email-update" disabled>
-                                </div>
-                                <div class="form-group">
-                                    <label for="admin-password-update">New Password</label>
-                                    <input type="password" id="admin-password-update" placeholder="Leave blank to keep current password">
-                                </div>
-                                <button type="submit" class="primary-btn">Update Profile</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                <button type="submit" class="submit-btn">Add Project</button>
+            </form>
         </div>
     </div>
 
+    <!-- Add Admin Modal -->
+    <div id="add-admin-modal" class="admin-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Add New Admin</h2>
+            <form id="add-admin-form">
+                <div class="form-group">
+                    <label for="admin-email">Email Address</label>
+                    <input type="email" id="admin-email" required>
+                </div>
+                <button type="submit" class="submit-btn">Grant Admin Access</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <a href="#"><span class="highlight">Arche</span>verse</a>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="#admin-dashboard">Dashboard</a>
+                    <a href="#content-management">Content</a>
+                    <a href="#user-management">Users</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Archeverse. All rights reserved.</p>
+                <p>Admin Lounge</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+        <span class="ripple-effect"></span>
+    </button>
+
     <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-    <script src="lounge.js"></script>
+    <script src="admin-lounge.js"></script>
 </body>
 </html>
