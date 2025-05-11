@@ -329,9 +329,9 @@ function init3DModel() {
     
     // Create materials with different colors
     const materials = [
-        new THREE.MeshPhongMaterial({ color: 0x2a2a72, flatShading: true }), // Primary color
-        new THREE.MeshPhongMaterial({ color: 0x009ffd, flatShading: true }), // Secondary color
-        new THREE.MeshPhongMaterial({ color: 0xff3d71, flatShading: true })  // Accent color
+        new THREE.MeshPhongMaterial({ color: 0x2d46b9, flatShading: true }), // Primary color
+        new THREE.MeshPhongMaterial({ color: 0x0496ff, flatShading: true }), // Secondary color
+        new THREE.MeshPhongMaterial({ color: 0xff3a5e, flatShading: true })  // Accent color
     ];
     
     // Create nested hexagonal prisms
@@ -455,9 +455,6 @@ function initFirebase() {
     
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    
-    // Initialize Analytics
-    firebase.analytics();
     
     // Load dynamic content from Firebase
     loadProjects();
