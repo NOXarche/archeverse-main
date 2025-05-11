@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const db = firebase.firestore();
         db.collection('users').doc(user.uid).get()
             .then((doc) => {
-                if (doc.exists && doc.data().role === 'admin') {
+                if (doc.exists && doc.data().isAdmin === true) {
                     // User is admin, update UI with user info
                     updateUserInfo(user, doc.data());
                     initializeAdmin();
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const adminName = document.getElementById('admin-name');
         const adminAvatar = document.getElementById('admin-avatar');
         
-        adminName.textContent = userData.displayName || user.email;
+        adminName.textContent = userData.name || user.email;
         
         if (userData.photoURL) {
             adminAvatar.src = userData.photoURL;
@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         deleteBtn.addEventListener('click', function() {
-            deleteProject(project.id);
+            deleteProject(project.id, project.imageUrl);
         });
         
         return row;
@@ -392,11 +392,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Delete project
-    function deleteProject(projectId) {
+    function deleteProject(projectId, imageUrl) {
         if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
             const db = firebase.database();
+            const storage = firebase.storage();
             
+            // Delete project data from database
             db.ref(`projects/${projectId}`).remove()
+                .then(() => {
+                    // Try to delete the image from storage if it's from our storage
+                    if (imageUrl && imageUrl.includes('firebasestorage')) {
+                        // Extract the path from the URL
+                        const imageRef = storage.refFromURL(imageUrl);
+                        
+                        // Delete the file
+                        return imageRef.delete();
+                    }
+                    return Promise.resolve();
+                })
                 .then(() => {
                     // Add activity log
                     logActivity('delete', 'Project Deleted', 'A project was deleted from the database.');
@@ -597,298 +610,178 @@ document.addEventListener('DOMContentLoaded', function() {
     function closeModal() {
         document.getElementById('upload-modal').style.display = 'none';
     }
+    
     // Upload image file to Firebase Storage
-function uploadImageFile(file, title, description, status, technologies, githubUrl, detailsUrl, submitBtn, originalBtnText) {
-    // Create a storage reference
-    const storage = firebase.storage();
-    const storageRef = storage.ref();
-    
-    // Create file metadata including the content type
-    const metadata = {
-        contentType: file.type
-    };
-    
-    // Create a unique filename with timestamp to prevent overwriting
-    const timestamp = new Date().getTime();
-    const fileName = `projects/${timestamp}_${file.name.replace(/\s+/g, '_')}`;
-    const uploadTask = storageRef.child(fileName).put(file, metadata);
-    
-    // Listen for state changes, errors, and completion
-    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-        // Progress monitoring
-        (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading... ${Math.round(progress)}%`;
-        },
-        // Error handling
-        (error) => {
-            console.error("Upload failed:", error);
-            submitBtn.innerHTML = originalBtnText;
-            submitBtn.disabled = false;
-            alert(`Upload failed: ${error.message}`);
-        },
-        // Upload completed successfully
-        () => {
-            // Get the download URL
-            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                // Save project data to Firebase Database
-                saveProjectData(downloadURL, title, description, status, technologies, githubUrl, detailsUrl, submitBtn, originalBtnText);
-            });
-        }
-    );
-}
-
-// Upload image from URL to Firebase Storage
-function uploadImageFromUrl(url, title, description, status, technologies, githubUrl, detailsUrl, submitBtn, originalBtnText) {
-    // Create a reference to the file in Firebase Storage
-    const storage = firebase.storage();
-    const storageRef = storage.ref();
-    
-    // Fetch the image from the URL
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            // Create file metadata including the content type
-            const metadata = {
-                contentType: blob.type
-            };
-            
-            // Create a unique filename with timestamp
-            const timestamp = new Date().getTime();
-            const fileName = `projects/${timestamp}_image_from_url.${blob.type.split('/')[1] || 'jpg'}`;
-            
-            // Upload the blob to Firebase Storage
-            const uploadTask = storageRef.child(fileName).put(blob, metadata);
-            
-            // Listen for state changes, errors, and completion
-            uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
-                // Progress monitoring
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading... ${Math.round(progress)}%`;
-                },
-                // Error handling
-                (error) => {
-                    console.error("Upload failed:", error);
-                    submitBtn.innerHTML = originalBtnText;
-                    submitBtn.disabled = false;
-                    alert(`Upload failed: ${error.message}`);
-                },
-                // Upload completed successfully
-                () => {
-                    // Get the download URL
-                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        // Save project data to Firebase Database
-                        saveProjectData(downloadURL, title, description, status, technologies, githubUrl, detailsUrl, submitBtn, originalBtnText);
-                    });
-                }
-            );
-        })
-        .catch(error => {
-            console.error("Error fetching image from URL:", error);
-            submitBtn.innerHTML = originalBtnText;
-            submitBtn.disabled = false;
-            alert(`Error fetching image from URL: ${error.message}`);
-        });
-}
-
-// Save project data to Firebase Database
-function saveProjectData(imageUrl, title, description, status, technologies, githubUrl, detailsUrl, submitBtn, originalBtnText) {
-    const db = firebase.database();
-    const form = document.getElementById('upload-form');
-    const projectId = form.getAttribute('data-id');
-    
-    const projectData = {
-        title: title,
-        description: description,
-        status: status,
-        technologies: technologies,
-        imageUrl: imageUrl,
-        githubUrl: githubUrl || '',
-        detailsUrl: detailsUrl || '',
-        lastUpdated: Date.now()
-    };
-    
-    let savePromise;
-    
-    if (projectId) {
-        // Update existing project
-        savePromise = db.ref(`projects/${projectId}`).update(projectData);
-    } else {
-        // Add new project
-        savePromise = db.ref('projects').push(projectData);
-    }
-    
-    savePromise
-        .then(() => {
-            // Log activity
-            const activityType = projectId ? 'update' : 'create';
-            const activityTitle = projectId ? 'Project Updated' : 'New Project Added';
-            const activityDescription = `${title} was ${projectId ? 'updated' : 'added'} to the projects.`;
-            
-            logActivity(activityType, activityTitle, activityDescription);
-            
-            // Show success message
-            submitBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
-            
-            // Reset form and close modal after delay
-            setTimeout(() => {
+    function uploadImageFile(file, title, description, status, technologies, githubUrl, detailsUrl, submitBtn, originalBtnText) {
+        // Create a storage reference
+        const storage = firebase.storage();
+        const storageRef = storage.ref();
+        
+        // Create file metadata including the content type
+        const metadata = {
+            contentType: file.type
+        };
+        
+        // Create a unique filename with timestamp to prevent overwriting
+        const timestamp = new Date().getTime();
+        const fileName = `projects/${timestamp}_${file.name.replace(/\s+/g, '_')}`;
+        const uploadTask = storageRef.child(fileName).put(file, metadata);
+        
+        // Listen for state changes, errors, and completion
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+            // Progress monitoring
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading... ${Math.round(progress)}%`;
+            },
+            // Error handling
+            (error) => {
+                console.error("Upload failed:", error);
                 submitBtn.innerHTML = originalBtnText;
                 submitBtn.disabled = false;
-                closeModal();
-                
-                // Reload projects
-                loadProjects();
-                
-                // Update project count
-                fetchProjectCount();
-            }, 1500);
-        })
-        .catch((error) => {
-            console.error("Error saving project:", error);
-            submitBtn.innerHTML = originalBtnText;
-            submitBtn.disabled = false;
-            alert(`Error saving project: ${error.message}`);
-        });
-}
-
-// Log activity to Firebase
-function logActivity(type, title, description) {
-    const db = firebase.database();
-    
-    db.ref('activity').push({
-        type: type,
-        title: title,
-        description: description,
-        timestamp: Date.now()
-    }).catch((error) => {
-        console.error("Error logging activity:", error);
-    });
-}
-
-// Load projects for the admin table
-function loadProjects() {
-    const projectsTableBody = document.getElementById('projects-table-body');
-    const db = firebase.database();
-    
-    db.ref('projects').once('value')
-        .then((snapshot) => {
-            // Clear loading spinner
-            projectsTableBody.innerHTML = '';
-            
-            if (snapshot.exists()) {
-                // Convert to array
-                const projects = [];
-                snapshot.forEach((childSnapshot) => {
-                    projects.push({
-                        id: childSnapshot.key,
-                        ...childSnapshot.val()
-                    });
+                alert(`Upload failed: ${error.message}`);
+            },
+            // Upload completed successfully
+            () => {
+                // Get the download URL
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    // Save project data to Firebase Database
+                    saveProjectData(downloadURL, title, description, status, technologies, githubUrl, detailsUrl, submitBtn, originalBtnText);
                 });
-                
-                // Sort by last updated (newest first)
-                projects.sort((a, b) => b.lastUpdated - a.lastUpdated);
-                
-                // Display projects
-                projects.forEach((project) => {
-                    const row = createProjectRow(project);
-                    projectsTableBody.appendChild(row);
-                });
-            } else {
-                projectsTableBody.innerHTML = '<tr><td colspan="4">No projects found. Add your first project!</td></tr>';
             }
-        })
-        .catch((error) => {
-            console.error("Error fetching projects:", error);
-            projectsTableBody.innerHTML = '<tr><td colspan="4">Error loading projects. Please try again.</td></tr>';
-        });
-}
-
-// Create project table row
-function createProjectRow(project) {
-    const row = document.createElement('tr');
+        );
+    }
     
-    // Format date
-    const date = new Date(project.lastUpdated);
-    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-    
-    row.innerHTML = `
-        <td>
-            <div class="project-title-cell">
-                <img src="${project.imageUrl}" alt="${project.title}" width="50" height="50" style="object-fit: cover; border-radius: 6px; margin-right: 10px;">
-                ${project.title}
-            </div>
-        </td>
-        <td><span class="status-badge status-${project.status}">${project.status.charAt(0).toUpperCase() + project.status.slice(1)}</span></td>
-        <td>${formattedDate}</td>
-        <td>
-            <div class="table-actions">
-                <button class="action-btn edit-btn" data-id="${project.id}"><i class="fas fa-edit"></i></button>
-                <button class="action-btn delete-btn" data-id="${project.id}"><i class="fas fa-trash"></i></button>
-            </div>
-        </td>
-    `;
-    
-    // Add event listeners for edit and delete buttons
-    const editBtn = row.querySelector('.edit-btn');
-    const deleteBtn = row.querySelector('.delete-btn');
-    
-    editBtn.addEventListener('click', function() {
-        editProject(project);
-    });
-    
-    deleteBtn.addEventListener('click', function() {
-        deleteProject(project.id, project.imageUrl);
-    });
-    
-    return row;
-}
-
-// Edit project
-function editProject(project) {
-    openUploadModal('project', project);
-}
-
-// Delete project
-function deleteProject(projectId, imageUrl) {
-    if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-        const db = firebase.database();
+    // Upload image from URL to Firebase Storage
+    function uploadImageFromUrl(url, title, description, status, technologies, githubUrl, detailsUrl, submitBtn, originalBtnText) {
+        // Create a reference to the file in Firebase Storage
         const storage = firebase.storage();
+        const storageRef = storage.ref();
         
-        // Delete project data from database
-        db.ref(`projects/${projectId}`).remove()
-            .then(() => {
-                // Try to delete the image from storage if it's from our storage
-                if (imageUrl && imageUrl.includes('firebasestorage')) {
-                    // Extract the path from the URL
-                    const imageRef = storage.refFromURL(imageUrl);
-                    
-                    // Delete the file
-                    return imageRef.delete();
+        // Fetch the image from the URL
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-                return Promise.resolve();
+                return response.blob();
             })
-            .then(() => {
-                // Add activity log
-                logActivity('delete', 'Project Deleted', 'A project was deleted from the database.');
+            .then(blob => {
+                // Create file metadata including the content type
+                const metadata = {
+                    contentType: blob.type
+                };
                 
-                // Reload projects
-                loadProjects();
+                // Create a unique filename with timestamp
+                const timestamp = new Date().getTime();
+                const fileName = `projects/${timestamp}_image_from_url.${blob.type.split('/')[1] || 'jpg'}`;
                 
-                // Update project count
-                fetchProjectCount();
+                // Upload the blob to Firebase Storage
+                const uploadTask = storageRef.child(fileName).put(blob, metadata);
                 
-                alert('Project deleted successfully!');
+                // Listen for state changes, errors, and completion
+                uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+                    // Progress monitoring
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading... ${Math.round(progress)}%`;
+                    },
+                    // Error handling
+                    (error) => {
+                        console.error("Upload failed:", error);
+                        submitBtn.innerHTML = originalBtnText;
+                        submitBtn.disabled = false;
+                        alert(`Upload failed: ${error.message}`);
+                    },
+                    // Upload completed successfully
+                    () => {
+                        // Get the download URL
+                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            // Save project data to Firebase Database
+                            saveProjectData(downloadURL, title, description, status, technologies, githubUrl, detailsUrl, submitBtn, originalBtnText);
+                        });
+                    }
+                );
             })
-            .catch((error) => {
-                console.error("Error deleting project:", error);
-                alert('Error deleting project. Please try again.');
+            .catch(error => {
+                console.error("Error fetching image from URL:", error);
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+                alert(`Error fetching image from URL: ${error.message}`);
             });
     }
-}
-
+    
+    // Save project data to Firebase Database
+    function saveProjectData(imageUrl, title, description, status, technologies, githubUrl, detailsUrl, submitBtn, originalBtnText) {
+        const db = firebase.database();
+        const form = document.getElementById('upload-form');
+        const projectId = form.getAttribute('data-id');
+        
+        const projectData = {
+            title: title,
+            description: description,
+            status: status,
+            technologies: technologies,
+            imageUrl: imageUrl,
+            githubUrl: githubUrl || '',
+            detailsUrl: detailsUrl || '',
+            lastUpdated: Date.now()
+        };
+        
+        let savePromise;
+        
+        if (projectId) {
+            // Update existing project
+            savePromise = db.ref(`projects/${projectId}`).update(projectData);
+        } else {
+            // Add new project
+            savePromise = db.ref('projects').push(projectData);
+        }
+        
+        savePromise
+            .then(() => {
+                // Log activity
+                const activityType = projectId ? 'update' : 'create';
+                const activityTitle = projectId ? 'Project Updated' : 'New Project Added';
+                const activityDescription = `${title} was ${projectId ? 'updated' : 'added'} to the projects.`;
+                
+                logActivity(activityType, activityTitle, activityDescription);
+                
+                // Show success message
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                
+                // Reset form and close modal after delay
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                    closeModal();
+                    
+                    // Reload projects
+                    loadProjects();
+                    
+                    // Update project count
+                    fetchProjectCount();
+                }, 1500);
+            })
+            .catch((error) => {
+                console.error("Error saving project:", error);
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+                alert(`Error saving project: ${error.message}`);
+            });
+    }
+    
+    // Log activity to Firebase
+    function logActivity(type, title, description) {
+        const db = firebase.database();
+        
+        db.ref('activity').push({
+            type: type,
+            title: title,
+            description: description,
+            timestamp: Date.now()
+        }).catch((error) => {
+            console.error("Error logging activity:", error);
+        });
+    }
+});
