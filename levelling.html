@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Levelling System | Archeverse</title>
+    <link rel="stylesheet" href="levelling.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS for scroll animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-sphere sphere-1"></div>
+        <div class="gradient-sphere sphere-2"></div>
+        <div class="gradient-sphere sphere-3"></div>
+        <div class="particles-container"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="theme-toggle-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+        </button>
+    </div>
+
+    <!-- Back to Admin Button -->
+    <div class="back-admin">
+        <a href="lounge.html" class="back-admin-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Admin</span>
+        </a>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo-emblem">
+                        <svg class="logo-svg" width="40" height="40" viewBox="0 0 80 80">
+                            <path class="logo-path" d="M40,5 L75,30 L75,70 L40,95 L5,70 L5,30 L40,5 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+                            <path class="logo-path-inner" d="M40,15 L65,35 L65,65 L40,85 L15,65 L15,35 L40,15 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+                            <path class="logo-path-center" d="M40,25 L55,40 L55,60 L40,75 L25,60 L25,40 L40,25 Z" fill="none" stroke="currentColor" stroke-width="2"></path>
+                        </svg>
+                    </div>
+                    <h1 class="system-title">GROWTH SYSTEM</h1>
+                </div>
+                <div class="player-status">
+                    <div class="rank-badge" id="player-rank">
+                        <span class="rank-letter">B</span>
+                        <span class="rank-name">HUNTER</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hunter Status Panel -->
+    <section class="hunter-status">
+        <div class="container">
+            <div class="status-grid">
+                <div class="player-card" data-aos="fade-right">
+                    <div class="player-avatar">
+                        <div class="avatar-frame">
+                            <img src="https://via.placeholder.com/150" alt="Player Avatar" id="player-avatar">
+                            <div class="avatar-level">25</div>
+                        </div>
+                        <div class="player-title">Shadow Engineer</div>
+                    </div>
+                    <div class="player-info">
+                        <div class="player-name" id="player-name">Hunter Name</div>
+                        <div class="level-progress">
+                            <div class="level-text">LEVEL 25</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                                <span class="progress-text">6,500 / 10,000 XP</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="resource-panel" data-aos="fade-left">
+                    <div class="resource-item growth-coins">
+                        <div class="resource-icon">
+                            <img src="https://via.placeholder.com/40" alt="Growth Coin" class="coin-icon">
+                        </div>
+                        <div class="resource-value" id="growth-coins">1,250</div>
+                        <div class="resource-label">GROWTH</div>
+                    </div>
+                    <div class="resource-item health">
+                        <div class="resource-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="resource-bar">
+                            <div class="bar-fill health-fill" style="width: 80%"></div>
+                            <span class="bar-text">80/100</span>
+                        </div>
+                        <div class="resource-label">HEALTH</div>
+                    </div>
+                    <div class="resource-item energy">
+                        <div class="resource-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="resource-bar">
+                            <div class="bar-fill energy-fill" style="width: 65%"></div>
+                            <span class="bar-text">65/100</span>
+                        </div>
+                        <div class="resource-label">ENERGY</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+        <div class="container">
+            <div class="dashboard-grid">
+                <!-- Stats Panel -->
+                <section class="stats-panel" data-aos="fade-up">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-chart-bar"></i> HUNTER STATS</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="stat-grid">
+                            <div class="stat-item">
+                                <div class="stat-icon"><i class="fas fa-brain"></i></div>
+                                <div class="stat-info">
+                                    <div class="stat-name">Intelligence</div>
+                                    <div class="stat-value">75</div>
+                                    <div class="stat-bar">
+                                        <div class="stat-fill" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
+                                <div class="stat-info">
+                                    <div class="stat-name">Focus</div>
+                                    <div class="stat-value">68</div>
+                                    <div class="stat-bar">
+                                        <div class="stat-fill" style="width: 68%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon"><i class="fas fa-fist-raised"></i></div>
+                                <div class="stat-info">
+                                    <div class="stat-name">Discipline</div>
+                                    <div class="stat-value">82</div>
+                                    <div class="stat-bar">
+                                        <div class="stat-fill" style="width: 82%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon"><i class="fas fa-heartbeat"></i></div>
+                                <div class="stat-info">
+                                    <div class="stat-name">Vitality</div>
+                                    <div class="stat-value">70</div>
+                                    <div class="stat-bar">
+                                        <div class="stat-fill" style="width: 70%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Daily Quest Board -->
+                <section class="quest-board" data-aos="fade-up" data-aos-delay="100">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-tasks"></i> DAILY QUESTS</h2>
+                        <div class="panel-actions">
+                            <button class="action-btn refresh-btn" id="refresh-quests">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="quest-list">
+                            <div class="quest-item">
+                                <div class="quest-checkbox">
+                                    <input type="checkbox" id="quest1">
+                                    <label for="quest1"></label>
+                                </div>
+                                <div class="quest-info">
+                                    <div class="quest-name">Code for 1 hour</div>
+                                    <div class="quest-description">Complete a coding session</div>
+                                </div>
+                                <div class="quest-rewards">
+                                    <div class="reward xp">+50 XP</div>
+                                    <div class="reward coins">+10 ₲</div>
+                                </div>
+                            </div>
+                            <div class="quest-item">
+                                <div class="quest-checkbox">
+                                    <input type="checkbox" id="quest2">
+                                    <label for="quest2"></label>
+                                </div>
+                                <div class="quest-info">
+                                    <div class="quest-name">Study GRE Vocabulary</div>
+                                    <div class="quest-description">Learn 20 new words</div>
+                                </div>
+                                <div class="quest-rewards">
+                                    <div class="reward xp">+30 XP</div>
+                                    <div class="reward coins">+5 ₲</div>
+                                </div>
+                            </div>
+                            <div class="quest-item">
+                                <div class="quest-checkbox">
+                                    <input type="checkbox" id="quest3">
+                                    <label for="quest3"></label>
+                                </div>
+                                <div class="quest-info">
+                                    <div class="quest-name">15-minute Workout</div>
+                                    <div class="quest-description">Complete a quick exercise routine</div>
+                                </div>
+                                <div class="quest-rewards">
+                                    <div class="reward xp">+20 XP</div>
+                                    <div class="reward health">+5 ❤️</div>
+                                </div>
+                            </div>
+                            <div class="quest-item">
+                                <div class="quest-checkbox">
+                                    <input type="checkbox" id="quest4">
+                                    <label for="quest4"></label>
+                                </div>
+                                <div class="quest-info">
+                                    <div class="quest-name">Read Technical Article</div>
+                                    <div class="quest-description">Read and summarize one article</div>
+                                </div>
+                                <div class="quest-rewards">
+                                    <div class="reward xp">+25 XP</div>
+                                    <div class="reward coins">+8 ₲</div>
+                                </div>
+                            </div>
+                            <div class="quest-item">
+                                <div class="quest-checkbox">
+                                    <input type="checkbox" id="quest5">
+                                    <label for="quest5"></label>
+                                </div>
+                                <div class="quest-info">
+                                    <div class="quest-name">Drink 2L Water</div>
+                                    <div class="quest-description">Stay hydrated throughout the day</div>
+                                </div>
+                                <div class="quest-rewards">
+                                    <div class="reward xp">+15 XP</div>
+                                    <div class="reward health">+10 ❤️</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Weekly Challenges -->
+                <section class="weekly-challenges" data-aos="fade-up" data-aos-delay="200">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-trophy"></i> WEEKLY CHALLENGES</h2>
+                        <div class="panel-actions">
+                            <div class="time-remaining">
+                                <i class="far fa-clock"></i>
+                                <span id="week-countdown">4d 12h 30m</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="challenge-list">
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">Complete 3 LeetCode Hard Problems</div>
+                                    <div class="challenge-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 33%"></div>
+                                            <span class="progress-text">1/3</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="challenge-rewards">
+                                    <div class="reward xp">+200 XP</div>
+                                    <div class="reward coins">+50 ₲</div>
+                                </div>
+                            </div>
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="fas fa-pen-fancy"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">Write 1 Blog Post</div>
+                                    <div class="challenge-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 0%"></div>
+                                            <span class="progress-text">0/1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="challenge-rewards">
+                                    <div class="reward xp">+150 XP</div>
+                                    <div class="reward coins">+30 ₲</div>
+                                </div>
+                            </div>
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="fas fa-dumbbell"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">Exercise 5 Days</div>
+                                    <div class="challenge-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 60%"></div>
+                                            <span class="progress-text">3/5</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="challenge-rewards">
+                                    <div class="reward xp">+100 XP</div>
+                                    <div class="reward health">+25 ❤️</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Exam Dungeons -->
+                <section class="exam-dungeons" data-aos="fade-up" data-aos-delay="300">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-dungeon"></i> EXAM DUNGEONS</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="dungeon-list">
+                            <div class="dungeon-item">
+                                <div class="dungeon-header">
+                                    <div class="dungeon-name">GRE Verbal Dungeon</div>
+                                    <div class="dungeon-level">Lv. 28</div>
+                                </div>
+                                <div class="dungeon-body">
+                                    <div class="dungeon-description">Master vocabulary and reading comprehension</div>
+                                    <div class="dungeon-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 70%"></div>
+                                            <span class="progress-text">70%</span>
+                                        </div>
+                                    </div>
+                                    <div class="dungeon-rewards">
+                                        <div class="reward xp">+500 XP</div>
+                                        <div class="reward coins">+100 ₲</div>
+                                    </div>
+                                </div>
+                                <div class="dungeon-actions">
+                                    <button class="dungeon-btn">
+                                        <i class="fas fa-play"></i> Enter Dungeon
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="dungeon-item">
+                                <div class="dungeon-header">
+                                    <div class="dungeon-name">GATE CS Algorithm Arena</div>
+                                    <div class="dungeon-level">Lv. 35</div>
+                                </div>
+                                <div class="dungeon-body">
+                                    <div class="dungeon-description">Solve complex algorithm challenges</div>
+                                    <div class="dungeon-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 45%"></div>
+                                            <span class="progress-text">45%</span>
+                                        </div>
+                                    </div>
+                                    <div class="dungeon-rewards">
+                                        <div class="reward xp">+800 XP</div>
+                                        <div class="reward coins">+200 ₲</div>
+                                    </div>
+                                </div>
+                                <div class="dungeon-actions">
+                                    <button class="dungeon-btn">
+                                        <i class="fas fa-play"></i> Enter Dungeon
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="dungeon-item locked">
+                                <div class="dungeon-header">
+                                    <div class="dungeon-name">GATE DA Data Modeling Chamber</div>
+                                    <div class="dungeon-level">Lv. 40</div>
+                                </div>
+                                <div class="dungeon-body">
+                                    <div class="dungeon-description">Master data analysis and modeling techniques</div>
+                                    <div class="lock-message">
+                                        <i class="fas fa-lock"></i> Requires Level 30
+                                    </div>
+                                    <div class="dungeon-rewards">
+                                        <div class="reward xp">+1000 XP</div>
+                                        <div class="reward coins">+250 ₲</div>
+                                    </div>
+                                </div>
+                                <div class="dungeon-actions">
+                                    <button class="dungeon-btn" disabled>
+                                        <i class="fas fa-lock"></i> Locked
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Growth Market -->
+                <section class="growth-market" data-aos="fade-up" data-aos-delay="400">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-store"></i> GROWTH MARKET</h2>
+                        <div class="panel-actions">
+                            <div class="market-balance">
+                                <img src="https://via.placeholder.com/20" alt="Growth Coin" class="coin-icon-small">
+                                <span id="market-coins">1,250</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="market-items">
+                            <div class="market-item">
+                                <div class="item-icon">
+                                    <i class="fas fa-headphones"></i>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-name">Focus Booster</div>
+                                    <div class="item-description">2h ad-blocked study session</div>
+                                </div>
+                                <div class="item-price">
+                                    <img src="https://via.placeholder.com/16" alt="Growth Coin" class="coin-icon-tiny">
+                                    <span>50</span>
+                                </div>
+                                <button class="buy-btn">Purchase</button>
+                            </div>
+                            <div class="market-item">
+                                <div class="item-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-name">Secret Notes</div>
+                                    <div class="item-description">Curated GATE DA prep materials</div>
+                                </div>
+                                <div class="item-price">
+                                    <img src="https://via.placeholder.com/16" alt="Growth Coin" class="coin-icon-tiny">
+                                    <span>120</span>
+                                </div>
+                                <button class="buy-btn">Purchase</button>
+                            </div>
+                            <div class="market-item special">
+                                <div class="special-tag">Limited</div>
+                                <div class="item-icon">
+                                    <i class="fas fa-flask"></i>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-name">Cram Potion</div>
+                                    <div class="item-description">+50% efficiency for 1h</div>
+                                </div>
+                                <div class="item-price">
+                                    <img src="https://via.placeholder.com/16" alt="Growth Coin" class="coin-icon-tiny">
+                                    <span>200</span>
+                                </div>
+                                <button class="buy-btn">Purchase</button>
+                            </div>
+                            <div class="market-item">
+                                <div class="item-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-name">VIP Project</div>
+                                    <div class="item-description">Unlock robotics tutorial</div>
+                                </div>
+                                <div class="item-price">
+                                    <img src="https://via.placeholder.com/16" alt="Growth Coin" class="coin-icon-tiny">
+                                    <span>300</span>
+                                </div>
+                                <button class="buy-btn">Purchase</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Achievements -->
+                <section class="achievements" data-aos="fade-up" data-aos-delay="500">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-medal"></i> ACHIEVEMENTS</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="achievement-list">
+                            <div class="achievement-item unlocked">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">Code Warrior</div>
+                                    <div class="achievement-description">Complete 50 coding challenges</div>
+                                </div>
+                                <div class="achievement-date">Unlocked: May 5, 2025</div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">Vocab Vanquisher</div>
+                                    <div class="achievement-description">Master 500 GRE vocabulary words</div>
+                                    <div class="achievement-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 60%"></div>
+                                            <span class="progress-text">300/500</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="achievement-item">
+                                <div class="achievement-icon">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">Streak Master</div>
+                                    <div class="achievement-description">Maintain a 30-day study streak</div>
+                                    <div class="achievement-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 40%"></div>
+                                            <span class="progress-text">12/30</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Level Up Modal -->
+    <div class="modal" id="level-up-modal">
+        <div class="modal-content">
+            <div class="level-up-animation">
+                <div class="level-up-glow"></div>
+                <div class="level-up-text">LEVEL UP!</div>
+                <div class="new-level">Level 26</div>
+                <div class="rewards-list">
+                    <div class="reward-item">
+                        <i class="fas fa-star"></i>
+                        <span>Stat Points: +5</span>
+                    </div>
+                    <div class="reward-item">
+                        <img src="https://via.placeholder.com/20" alt="Growth Coin" class="coin-icon-small">
+                        <span>GROWTH: +100</span>
+                    </div>
+                    <div class="reward-item">
+                        <i class="fas fa-unlock"></i>
+                        <span>New Skill: Data Visualization</span>
+                    </div>
+                </div>
+                <button class="continue-btn">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quest Complete Modal -->
+    <div class="modal" id="quest-complete-modal">
+        <div class="modal-content">
+            <div class="quest-complete-animation">
+                <div class="quest-complete-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="quest-complete-text">QUEST COMPLETE!</div>
+                <div class="quest-name">Code for 1 hour</div>
+                <div class="rewards-earned">
+                    <div class="reward-item">
+                        <i class="fas fa-star"></i>
+                        <span>+50 XP</span>
+                    </div>
+                    <div class="reward-item">
+                        <img src="https://via.placeholder.com/20" alt="Growth Coin" class="coin-icon-small">
+                        <span>+10 GROWTH</span>
+                    </div>
+                </div>
+                <button class="continue-btn">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="levelling.js"></script>
+</body>
+</html>
