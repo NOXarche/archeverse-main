@@ -16,13 +16,23 @@ document.addEventListener('DOMContentLoaded', function() {
     initChallenges();
     initDungeons();
     initMarket();
+    initGoals();
+    initSkillTree();
     initAnimatedBackground();
     initModals();
-    loadUserData();
+    updateCurrentDate();
     
     // Check auth status
     checkAuthStatus();
 });
+
+// Update current date
+function updateCurrentDate() {
+    const dateElement = document.getElementById('current-date');
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const currentDate = new Date().toLocaleDateString('en-US', options);
+    dateElement.textContent = currentDate;
+}
 
 // Firebase initialization
 function initFirebase() {
@@ -61,6 +71,7 @@ function checkAuthStatus() {
                         console.log("User has admin role");
                         // Allow access to levelling system
                         document.getElementById('player-name').textContent = user.displayName || user.email;
+                        loadUserData();
                     } else {
                         // Not an admin, redirect to main page
                         console.log("User is not an admin, redirecting");
@@ -109,6 +120,8 @@ function loadUserData() {
                     growthCoins: 100,
                     health: 100,
                     energy: 100,
+                    streak: 0,
+                    lastActive: new Date().toISOString(),
                     stats: {
                         intelligence: 10,
                         focus: 10,
@@ -123,10 +136,24 @@ function loadUserData() {
                         weekly: generateWeeklyChallenges(),
                         lastReset: new Date().toISOString()
                     },
+                    goals: generateInitialGoals(),
                     dungeons: {
                         'gre-verbal': { progress: 0, completed: false },
                         'gate-cs': { progress: 0, completed: false },
                         'gate-da': { progress: 0, completed: false, locked: true }
+                    },
+                    skillTree: {
+                        programming: {
+                            'basic-coding': { unlocked: true, level: 1 },
+                            'python': { unlocked: true, level: 1 },
+                            'sql': { unlocked: false, level: 0 },
+                            'machine-learning': { unlocked: false, level: 0, locked: true }
+                        },
+                        engineering: {
+                            'mathematics': { unlocked: true, level: 1 },
+                            'systems-design': { unlocked: false, level: 0 },
+                            'hardware': { unlocked: false, level: 0, locked: true }
+                        }
                     },
                     inventory: [],
                     achievements: [],
@@ -156,6 +183,9 @@ function updateUIWithUserData(data) {
     document.querySelector('.progress-fill').style.width = `${progressPercent}%`;
     document.querySelector('.progress-text').textContent = `${data.xp} / ${data.xpToNextLevel} XP`;
     
+    // Update streak
+    document.getElementById('current-streak').textContent = `${data.streak} Day Streak`;
+    
     // Update rank
     document.querySelector('.rank-letter').textContent = data.rank;
     
@@ -178,12 +208,65 @@ function updateUIWithUserData(data) {
     // Update challenges
     updateChallenges(data.challenges);
     
+    // Update goals
+    updateGoals(data.goals);
+    
     // Update dungeons
     updateDungeons(data.dungeons);
+    
+    // Update skill tree
+    updateSkillTree(data.skillTree);
     
     // Update achievements
     if (data.achievements) {
         updateAchievements(data.achievements);
+    }
+    
+    // Check streak and last active date
+    checkAndUpdateStreak(data);
+}
+
+// Check and update streak
+function checkAndUpdateStreak(data) {
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) return;
+    
+    const db = firebase.firestore();
+    const userId = currentUser.uid;
+    
+    const lastActive = new Date(data.lastActive);
+    const today = new Date();
+    
+    // Reset to midnight
+    lastActive.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    
+    // Calculate days difference
+    const diffTime = Math.abs(today - lastActive);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    let newStreak = data.streak;
+    
+    if (diffDays === 1) {
+        // Consecutive day, increase streak
+        newStreak++;
+    } else if (diffDays > 1) {
+        // Streak broken
+        newStreak = 0;
+    }
+    
+    // Update streak and last active date if changed
+    if (newStreak !== data.streak || diffDays >= 1) {
+        db.collection('levelling').doc(userId).update({
+            streak: newStreak,
+            lastActive: today.toISOString()
+        })
+        .then(() => {
+            document.getElementById('current-streak').textContent = `${newStreak} Day Streak`;
+        })
+        .catch((error) => {
+            console.error("Error updating streak:", error);
+        });
     }
 }
 
@@ -297,6 +380,42 @@ function generateWeeklyChallenges() {
     ];
 }
 
+// Generate initial goals
+function generateInitialGoals() {
+    return [
+        {
+            id: 'gre-prep',
+            title: 'Complete GRE Prep',
+            deadline: new Date(2025, 5, 15).toISOString(), // June 15, 2025
+            progress: 45,
+            milestones: [
+                { text: 'Register for test', completed: true },
+                { text: 'Complete practice test 1', completed: true },
+                { text: 'Complete practice test 2', completed: false }
+            ],
+            rewards: {
+                xp: 500,
+                growthCoins: 100
+            }
+        },
+        {
+            id: 'portfolio',
+            title: 'Build Portfolio Website',
+            deadline: new Date(2025, 4, 30).toISOString(), // May 30, 2025
+            progress: 70,
+            milestones: [
+                { text: 'Design mockups', completed: true },
+                { text: 'Create HTML structure', completed: true },
+                { text: 'Deploy website', completed: false }
+            ],
+            rewards: {
+                xp: 300,
+                growthCoins: 75
+            }
+        }
+    ];
+}
+
 // Update quests in UI
 function updateQuests(questData) {
     const questList = document.querySelector('.quest-list');
@@ -306,10 +425,6 @@ function updateQuests(questData) {
         const questItem = document.createElement('div');
         questItem.className = 'quest-item';
         questItem.innerHTML = `
-            <div class="quest-checkbox">
-                <input type="checkbox" id="quest${index+1}" ${quest.completed ? 'checked' : ''}>
-                <label for="quest${index+1}"></label>
-            </div>
             <div class="quest-info">
                 <div class="quest-name">${quest.name}</div>
                 <div class="quest-description">${quest.description}</div>
@@ -319,15 +434,21 @@ function updateQuests(questData) {
                 ${quest.rewards.growthCoins ? `<div class="reward coins">+${quest.rewards.growthCoins} ₲</div>` : ''}
                 ${quest.rewards.health ? `<div class="reward health">+${quest.rewards.health} ❤️</div>` : ''}
             </div>
+            <button class="complete-btn ${quest.completed ? 'completed' : ''}" data-id="${quest.id}">
+                <span>${quest.completed ? 'Completed' : 'Complete'}</span>
+                <i class="fas ${quest.completed ? 'fa-check-circle' : 'fa-check'}"></i>
+            </button>
         `;
         
         questList.appendChild(questItem);
         
-        // Add event listener to checkbox
-        const checkbox = questItem.querySelector(`#quest${index+1}`);
-        checkbox.addEventListener('change', function() {
-            completeQuest(quest.id, this.checked);
-        });
+        // Add event listener to complete button
+        const completeBtn = questItem.querySelector('.complete-btn');
+        if (!quest.completed) {
+            completeBtn.addEventListener('click', function() {
+                completeQuest(quest.id);
+            });
+        }
     });
     
     // Check if quests need to be reset (daily at midnight)
@@ -382,6 +503,104 @@ function updateChallenges(challengeData) {
     
     if (daysSinceReset >= 7) {
         resetWeeklyChallenges();
+    }
+}
+
+// Update goals in UI
+function updateGoals(goals) {
+    const goalsList = document.querySelector('.goals-list');
+    goalsList.innerHTML = '';
+    
+    goals.forEach(goal => {
+        const deadline = new Date(goal.deadline);
+        const formattedDeadline = deadline.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        
+        const goalItem = document.createElement('div');
+        goalItem.className = 'goal-item';
+        goalItem.innerHTML = `
+            <div class="goal-header">
+                <div class="goal-title">${goal.title}</div>
+                <div class="goal-deadline">Due: ${formattedDeadline}</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${goal.progress}%"></div>
+                    <span class="progress-text">${goal.progress}%</span>
+                </div>
+            </div>
+            <div class="goal-milestones">
+                ${goal.milestones.map(milestone => `
+                    <div class="milestone ${milestone.completed ? 'completed' : ''}">
+                        <i class="${milestone.completed ? 'fas fa-check-circle' : 'far fa-circle'}"></i>
+                        <span>${milestone.text}</span>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="goal-rewards">
+                ${goal.rewards.xp ? `<div class="reward xp">+${goal.rewards.xp} XP</div>` : ''}
+                ${goal.rewards.growthCoins ? `<div class="reward coins">+${goal.rewards.growthCoins} ₲</div>` : ''}
+            </div>
+        `;
+        
+        goalsList.appendChild(goalItem);
+    });
+}
+
+// Update skill tree in UI
+function updateSkillTree(skillTree) {
+    // Update Programming skills
+    const programmingNodes = document.querySelectorAll('.skill-category:nth-child(1) .skill-node');
+    
+    if (programmingNodes.length >= 4) {
+        // Basic Coding
+        if (skillTree.programming['basic-coding'].unlocked) {
+            programmingNodes[0].classList.add('unlocked');
+        }
+        
+        // Python
+        if (skillTree.programming['python'].unlocked) {
+            programmingNodes[1].classList.add('unlocked');
+        }
+        
+        // SQL
+        if (skillTree.programming['sql'].unlocked) {
+            programmingNodes[2].classList.add('unlocked');
+        } else {
+            programmingNodes[2].classList.remove('unlocked');
+        }
+        
+        // Machine Learning
+        if (skillTree.programming['machine-learning'].locked) {
+            programmingNodes[3].classList.add('locked');
+        } else if (skillTree.programming['machine-learning'].unlocked) {
+            programmingNodes[3].classList.add('unlocked');
+            programmingNodes[3].classList.remove('locked');
+        }
+    }
+    
+    // Update Engineering skills
+    const engineeringNodes = document.querySelectorAll('.skill-category:nth-child(2) .skill-node');
+    
+    if (engineeringNodes.length >= 3) {
+        // Mathematics
+        if (skillTree.engineering['mathematics'].unlocked) {
+            engineeringNodes[0].classList.add('unlocked');
+        }
+        
+        // Systems Design
+        if (skillTree.engineering['systems-design'].unlocked) {
+            engineeringNodes[1].classList.add('unlocked');
+        } else {
+            engineeringNodes[1].classList.remove('unlocked');
+        }
+        
+        // Hardware
+        if (skillTree.engineering['hardware'].locked) {
+            engineeringNodes[2].classList.add('locked');
+        } else if (skillTree.engineering['hardware'].unlocked) {
+            engineeringNodes[2].classList.add('unlocked');
+            engineeringNodes[2].classList.remove('locked');
+        }
     }
 }
 
@@ -545,7 +764,7 @@ function formatDate(timestamp) {
 }
 
 // Complete quest
-function completeQuest(questId, completed) {
+function completeQuest(questId) {
     const currentUser = firebase.auth().currentUser;
     if (!currentUser) return;
     
@@ -564,47 +783,99 @@ function completeQuest(questId, completed) {
             const quest = data.quests.daily[questIndex];
             
             // Update quest completion status
-            data.quests.daily[questIndex].completed = completed;
+            data.quests.daily[questIndex].completed = true;
             
-            // If completing the quest, award rewards
-            if (completed && !quest.completed) {
-                // Award XP
-                if (quest.rewards.xp) {
-                    data.xp += quest.rewards.xp;
-                    
-                    // Check for level up
-                    if (data.xp >= data.xpToNextLevel) {
-                        levelUp(data);
-                    }
+            // Award rewards
+            if (quest.rewards.xp) {
+                data.xp += quest.rewards.xp;
+                
+                // Check for level up
+                if (data.xp >= data.xpToNextLevel) {
+                    levelUp(data);
                 }
-                
-                // Award Growth Coins
-                if (quest.rewards.growthCoins) {
-                    data.growthCoins += quest.rewards.growthCoins;
-                }
-                
-                // Award Health
-                if (quest.rewards.health) {
-                    data.health = Math.min(100, data.health + quest.rewards.health);
-                }
-                
-                // Update related challenges
-                updateChallengeProgress(data, questId);
-                
-                // Show quest complete modal
-                showQuestCompleteModal(quest);
             }
+            
+            // Award Growth Coins
+            if (quest.rewards.growthCoins) {
+                data.growthCoins += quest.rewards.growthCoins;
+            }
+            
+            // Award Health
+            if (quest.rewards.health) {
+                data.health = Math.min(100, data.health + quest.rewards.health);
+            }
+            
+            // Update related challenges
+            updateChallengeProgress(data, questId);
+            
+            // Update last active date for streak
+            data.lastActive = new Date().toISOString();
             
             // Save updated data
             return db.collection('levelling').doc(userId).update(data)
                 .then(() => {
                     // Update UI
                     updateUIWithUserData(data);
+                    
+                    // Show quest complete modal
+                    showQuestCompleteModal(quest);
+                    
+                    // Add particle effects
+                    createCompletionParticles(event);
                 });
         })
         .catch((error) => {
             console.error("Error completing quest:", error);
         });
+}
+
+// Create particle effects on completion
+function createCompletionParticles(event) {
+    const particles = 30;
+    const colors = ['#2323ff', '#6a11cb', '#fc466b', '#55ff7f', '#ffcc00'];
+    
+    for (let i = 0; i < particles; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'completion-particle';
+        
+        // Random position around click
+        const x = event.clientX;
+        const y = event.clientY;
+        
+        // Random color
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Style the particle
+        particle.style.position = 'fixed';
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.width = `${Math.random() * 10 + 5}px`;
+        particle.style.height = `${Math.random() * 10 + 5}px`;
+        particle.style.backgroundColor = color;
+        particle.style.borderRadius = '50%';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '1000';
+        
+        document.body.appendChild(particle);
+        
+        // Animate the particle
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 100 + 50;
+        const destinationX = x + Math.cos(angle) * distance;
+        const destinationY = y + Math.sin(angle) * distance;
+        
+        const animation = particle.animate([
+            { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+            { transform: `translate(${destinationX - x}px, ${destinationY - y}px) scale(0)`, opacity: 0 }
+        ], {
+            duration: Math.random() * 1000 + 500,
+            easing: 'cubic-bezier(0, .9, .57, 1)'
+        });
+        
+        animation.onfinish = () => {
+            particle.remove();
+        };
+    }
 }
 
 // Update challenge progress based on completed quest
@@ -675,6 +946,15 @@ function levelUp(data) {
     if (data.level >= 30 && data.dungeons['gate-da'].locked) {
         data.dungeons['gate-da'].locked = false;
     }
+    
+    // Unlock skills based on level
+    if (data.level >= 10 && !data.skillTree.programming['sql'].unlocked) {
+        data.skillTree.programming['sql'].unlocked = true;
+    }
+    
+    if (data.level >= 15 && !data.skillTree.engineering['systems-design'].unlocked) {
+        data.skillTree.engineering['systems-design'].unlocked = true;
+    }
 }
 
 // Update rank based on level
@@ -688,10 +968,9 @@ function updateRank(data) {
         'S': 50
     };
     
-    for (const [rank, threshold] of Object.entries(rankThresholds).reverse()) {
+    for (const [rank, threshold] of Object.entries(rankThresholds)) {
         if (data.level >= threshold) {
             data.rank = rank;
-            break;
         }
     }
 }
@@ -776,6 +1055,23 @@ function showLevelUpModal(newLevel) {
     continueBtn.onclick = function() {
         modal.style.display = 'none';
     };
+    
+    // Add GSAP animation
+    gsap.from('.level-up-text', {
+        scale: 0,
+        opacity: 0,
+        duration: 0.5,
+        ease: 'back.out(1.7)'
+    });
+    
+    gsap.from('.rewards-list .reward-item', {
+        y: 50,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.5,
+        delay: 0.3,
+        ease: 'power2.out'
+    });
 }
 
 // Show quest complete modal
@@ -801,7 +1097,7 @@ function showQuestCompleteModal(quest) {
     if (quest.rewards.growthCoins) {
         const coinsReward = document.createElement('div');
         coinsReward.className = 'reward-item';
-        coinsReward.innerHTML = `<img src="https://via.placeholder.com/20" alt="Growth Coin" class="coin-icon-small"><span>+${quest.rewards.growthCoins} GROWTH</span>`;
+        coinsReward.innerHTML = `<img src="https://drive.google.com/uc?export=view&id=15jMp8zin_5fPz1S3r8gju9Bt4SXjRbVJ" alt="Growth Coin" class="coin-icon-small"><span>+${quest.rewards.growthCoins} GROWTH</span>`;
         rewardsEarned.appendChild(coinsReward);
     }
     
@@ -820,11 +1116,29 @@ function showQuestCompleteModal(quest) {
     continueBtn.onclick = function() {
         modal.style.display = 'none';
     };
+    
+    // Add GSAP animation
+    gsap.from('.quest-complete-icon', {
+        y: -50,
+        opacity: 0,
+        duration: 0.5,
+        ease: 'bounce.out'
+    });
+    
+    gsap.from('.rewards-earned .reward-item', {
+        scale: 0,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.5,
+        delay: 0.3,
+        ease: 'back.out(1.7)'
+    });
 }
 
 // Initialize quest system
 function initQuestSystem() {
     const refreshBtn = document.getElementById('refresh-quests');
+    const addQuestBtn = document.getElementById('add-quest');
     
     refreshBtn.addEventListener('click', function() {
         this.classList.add('rotating');
@@ -835,6 +1149,110 @@ function initQuestSystem() {
         
         resetDailyQuests();
     });
+    
+    addQuestBtn.addEventListener('click', function() {
+        showAddQuestModal();
+    });
+    
+    // Add quest form submission
+    const newQuestForm = document.getElementById('new-quest-form');
+    if (newQuestForm) {
+        newQuestForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addNewQuest();
+        });
+    }
+    
+    // Cancel button
+    const cancelBtn = document.querySelector('#add-quest-modal .cancel-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            document.getElementById('add-quest-modal').style.display = 'none';
+        });
+    }
+    
+    // Close modal button
+    const closeModal = document.querySelector('#add-quest-modal .close-modal');
+    if (closeModal) {
+        closeModal.addEventListener('click', function() {
+            document.getElementById('add-quest-modal').style.display = 'none';
+        });
+    }
+}
+
+// Show add quest modal
+function showAddQuestModal() {
+    const modal = document.getElementById('add-quest-modal');
+    modal.style.display = 'flex';
+    
+    // Reset form
+    document.getElementById('quest-name').value = '';
+    document.getElementById('quest-description').value = '';
+    document.getElementById('xp-reward').value = '20';
+    document.getElementById('coin-reward').value = '5';
+    document.getElementById('health-reward').value = '0';
+    document.getElementById('quest-category').value = 'study';
+}
+
+// Add new quest
+function addNewQuest() {
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) return;
+    
+    const db = firebase.firestore();
+    const userId = currentUser.uid;
+    
+    const questName = document.getElementById('quest-name').value;
+    const questDescription = document.getElementById('quest-description').value;
+    const xpReward = parseInt(document.getElementById('xp-reward').value) || 0;
+    const coinReward = parseInt(document.getElementById('coin-reward').value) || 0;
+    const healthReward = parseInt(document.getElementById('health-reward').value) || 0;
+    const category = document.getElementById('quest-category').value;
+    
+    // Generate unique ID
+    const questId = `custom-${Date.now()}`;
+    
+    // Create quest object
+    const newQuest = {
+        id: questId,
+        name: questName,
+        description: questDescription,
+        completed: false,
+        category: category,
+        rewards: {
+            xp: xpReward,
+            growthCoins: coinReward,
+            health: healthReward
+        }
+    };
+    
+    db.collection('levelling').doc(userId).get()
+        .then((doc) => {
+            if (!doc.exists) return;
+            
+            const data = doc.data();
+            
+            // Add new quest to daily quests
+            data.quests.daily.push(newQuest);
+            
+            // Save updated data
+            return db.collection('levelling').doc(userId).update({
+                'quests.daily': data.quests.daily
+            })
+            .then(() => {
+                // Update UI
+                updateQuests(data.quests);
+                
+                // Close modal
+                document.getElementById('add-quest-modal').style.display = 'none';
+                
+                // Show success message
+                showToast('Quest added successfully!');
+            });
+        })
+        .catch((error) => {
+            console.error("Error adding quest:", error);
+        });
 }
 
 // Initialize challenges
@@ -847,14 +1265,14 @@ function initDungeons() {
     const dungeonBtns = document.querySelectorAll('.dungeon-btn');
     
     dungeonBtns.forEach((btn, index) => {
-        btn.addEventListener('click', function() {
-            if (this.disabled) return;
-            
-            const dungeonIds = ['gre-verbal', 'gate-cs', 'gate-da'];
-            const dungeonId = dungeonIds[index];
-            
-            enterDungeon(dungeonId);
-        });
+        if (!btn.disabled) {
+            btn.addEventListener('click', function() {
+                const dungeonIds = ['gre-verbal', 'gate-cs', 'gate-da'];
+                const dungeonId = dungeonIds[index];
+                
+                enterDungeon(dungeonId);
+            });
+        }
     });
 }
 
@@ -862,7 +1280,210 @@ function initDungeons() {
 function enterDungeon(dungeonId) {
     // In a real implementation, this would navigate to a dungeon-specific page
     // For now, just show an alert
-    alert(`Entering ${dungeonId} dungeon. This feature is coming soon!`);
+    showToast(`Entering ${dungeonId} dungeon. This feature is coming soon!`);
+}
+
+// Initialize goals
+function initGoals() {
+    const addGoalBtn = document.getElementById('add-goal');
+    
+    addGoalBtn.addEventListener('click', function() {
+        showAddGoalModal();
+    });
+    
+    // Add goal form submission
+    const newGoalForm = document.getElementById('new-goal-form');
+    if (newGoalForm) {
+        newGoalForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addNewGoal();
+        });
+    }
+    
+    // Cancel button
+    const cancelBtn = document.querySelector('#add-goal-modal .cancel-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            document.getElementById('add-goal-modal').style.display = 'none';
+        });
+    }
+    
+    // Close modal button
+    const closeModal = document.querySelector('#add-goal-modal .close-modal');
+    if (closeModal) {
+        closeModal.addEventListener('click', function() {
+            document.getElementById('add-goal-modal').style.display = 'none';
+        });
+    }
+    
+    // Add milestone button
+    const addMilestoneBtn = document.querySelector('.add-milestone-btn');
+    if (addMilestoneBtn) {
+        addMilestoneBtn.addEventListener('click', function() {
+            addMilestoneInput();
+        });
+    }
+}
+
+// Show add goal modal
+function showAddGoalModal() {
+    const modal = document.getElementById('add-goal-modal');
+    modal.style.display = 'flex';
+    
+    // Reset form
+    document.getElementById('goal-title').value = '';
+    
+    // Set default deadline to 2 weeks from now
+    const twoWeeksFromNow = new Date();
+    twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+    document.getElementById('goal-deadline').value = twoWeeksFromNow.toISOString().split('T')[0];
+    
+    document.getElementById('goal-xp-reward').value = '100';
+    document.getElementById('goal-coin-reward').value = '25';
+    
+    // Reset milestones
+    const milestonesContainer = document.getElementById('milestones-container');
+    milestonesContainer.innerHTML = `
+        <div class="milestone-input">
+            <input type="text" placeholder="Enter milestone">
+            <button type="button" class="remove-milestone"><i class="fas fa-times"></i></button>
+        </div>
+    `;
+    
+    // Add event listener to remove button
+    const removeBtn = milestonesContainer.querySelector('.remove-milestone');
+    removeBtn.addEventListener('click', function() {
+        if (milestonesContainer.children.length > 1) {
+            this.parentElement.remove();
+        }
+    });
+}
+
+// Add milestone input
+function addMilestoneInput() {
+    const milestonesContainer = document.getElementById('milestones-container');
+    
+    const milestoneInput = document.createElement('div');
+    milestoneInput.className = 'milestone-input';
+    milestoneInput.innerHTML = `
+        <input type="text" placeholder="Enter milestone">
+        <button type="button" class="remove-milestone"><i class="fas fa-times"></i></button>
+    `;
+    
+    milestonesContainer.appendChild(milestoneInput);
+    
+    // Add event listener to remove button
+    const removeBtn = milestoneInput.querySelector('.remove-milestone');
+    removeBtn.addEventListener('click', function() {
+        this.parentElement.remove();
+    });
+}
+
+// Add new goal
+function addNewGoal() {
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) return;
+    
+    const db = firebase.firestore();
+    const userId = currentUser.uid;
+    
+    const goalTitle = document.getElementById('goal-title').value;
+    const goalDeadline = document.getElementById('goal-deadline').value;
+    const xpReward = parseInt(document.getElementById('goal-xp-reward').value) || 0;
+    const coinReward = parseInt(document.getElementById('goal-coin-reward').value) || 0;
+    
+    // Get milestones
+    const milestoneInputs = document.querySelectorAll('#milestones-container .milestone-input input');
+    const milestones = Array.from(milestoneInputs)
+        .filter(input => input.value.trim() !== '')
+        .map(input => ({
+            text: input.value,
+            completed: false
+        }));
+    
+    // Generate unique ID
+    const goalId = `goal-${Date.now()}`;
+    
+    // Create goal object
+    const newGoal = {
+        id: goalId,
+        title: goalTitle,
+        deadline: new Date(goalDeadline).toISOString(),
+        progress: 0,
+        milestones: milestones,
+        rewards: {
+            xp: xpReward,
+            growthCoins: coinReward
+        }
+    };
+    
+    db.collection('levelling').doc(userId).get()
+        .then((doc) => {
+            if (!doc.exists) return;
+            
+            const data = doc.data();
+            
+            // Add new goal
+            if (!data.goals) data.goals = [];
+            data.goals.push(newGoal);
+            
+            // Save updated data
+            return db.collection('levelling').doc(userId).update({
+                goals: data.goals
+            })
+            .then(() => {
+                // Update UI
+                updateGoals(data.goals);
+                
+                // Close modal
+                document.getElementById('add-goal-modal').style.display = 'none';
+                
+                // Show success message
+                showToast('Goal added successfully!');
+            });
+        })
+        .catch((error) => {
+            console.error("Error adding goal:", error);
+        });
+}
+
+// Initialize skill tree
+function initSkillTree() {
+    // Add click events to unlocked skill nodes
+    const skillNodes = document.querySelectorAll('.skill-node');
+    
+    skillNodes.forEach(node => {
+        if (!node.classList.contains('locked')) {
+            node.addEventListener('click', function() {
+                if (this.classList.contains('unlocked')) {
+                    showSkillDetails(this);
+                } else {
+                    tryUnlockSkill(this);
+                }
+            });
+        }
+    });
+}
+
+// Show skill details
+function showSkillDetails(node) {
+    const skillName = node.querySelector('.node-name').textContent;
+    showToast(`Skill: ${skillName} - Click again to level up`);
+}
+
+// Try to unlock a skill
+function tryUnlockSkill(node) {
+    const skillName = node.querySelector('.node-name').textContent;
+    
+    // Check if prerequisites are met
+    const previousNode = node.previousElementSibling;
+    if (previousNode && !previousNode.classList.contains('unlocked')) {
+        showToast(`You need to unlock ${previousNode.querySelector('.node-name').textContent} first!`);
+        return;
+    }
+    
+    // In a real implementation, check if user has enough resources
+    showToast(`Unlocking ${skillName}... Feature coming soon!`);
 }
 
 // Initialize market
@@ -898,7 +1519,7 @@ function purchaseItem(itemName, price) {
             
             // Check if user has enough coins
             if (data.growthCoins < price) {
-                alert(`Not enough GROWTH coins! You need ${price} coins to purchase ${itemName}.`);
+                showToast(`Not enough GROWTH coins! You need ${price} coins to purchase ${itemName}.`);
                 return;
             }
             
@@ -923,12 +1544,61 @@ function purchaseItem(itemName, price) {
                 document.getElementById('growth-coins').textContent = data.growthCoins.toLocaleString();
                 document.getElementById('market-coins').textContent = data.growthCoins.toLocaleString();
                 
-                alert(`Successfully purchased ${itemName}!`);
+                showToast(`Successfully purchased ${itemName}!`);
+                
+                // Add particle effects
+                createCoinParticles(event);
             });
         })
         .catch((error) => {
             console.error("Error purchasing item:", error);
         });
+}
+
+// Create coin particle effects
+function createCoinParticles(event) {
+    const particles = 20;
+    
+    for (let i = 0; i < particles; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'coin-particle';
+        
+        // Random position around click
+        const x = event.clientX;
+        const y = event.clientY;
+        
+        // Style the particle
+        particle.style.position = 'fixed';
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.width = '20px';
+        particle.style.height = '20px';
+        particle.style.backgroundImage = 'url("https://drive.google.com/uc?export=view&id=15jMp8zin_5fPz1S3r8gju9Bt4SXjRbVJ")';
+        particle.style.backgroundSize = 'contain';
+        particle.style.backgroundRepeat = 'no-repeat';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '1000';
+        
+        document.body.appendChild(particle);
+        
+        // Animate the particle
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 100 + 50;
+        const destinationX = x + Math.cos(angle) * distance;
+        const destinationY = y + Math.sin(angle) * distance;
+        
+        const animation = particle.animate([
+            { transform: 'translate(0, 0) scale(1) rotate(0deg)', opacity: 1 },
+            { transform: `translate(${destinationX - x}px, ${destinationY - y}px) scale(0) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+        ], {
+            duration: Math.random() * 1000 + 500,
+            easing: 'cubic-bezier(0, .9, .57, 1)'
+        });
+        
+        animation.onfinish = () => {
+            particle.remove();
+        };
+    }
 }
 
 // Theme Toggle
@@ -943,6 +1613,8 @@ function initThemeToggle() {
         setTimeout(() => {
             this.classList.remove('rotating');
         }, 1000);
+        
+        showToast('Solo Leveling theme is always active!');
     });
 }
 
@@ -1023,4 +1695,66 @@ function initModals() {
             }
         });
     });
+}
+
+// Additional utility functions can be added here
+
+// Example: Show toast notification
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// Example: Animate particle effect on quest completion
+function createCompletionParticles(event) {
+    const particles = 30;
+    const colors = ['#2323ff', '#6a11cb', '#fc466b', '#55ff7f', '#ffcc00'];
+    
+    for (let i = 0; i < particles; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'completion-particle';
+        
+        // Random position around click
+        const x = event.clientX;
+        const y = event.clientY;
+        
+        // Random color
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Style the particle
+        particle.style.position = 'fixed';
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.width = `${Math.random() * 10 + 5}px`;
+        particle.style.height = `${Math.random() * 10 + 5}px`;
+        particle.style.backgroundColor = color;
+        particle.style.borderRadius = '50%';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '1000';
+        
+        document.body.appendChild(particle);
+        
+        // Animate the particle
+        const angle = Math.random() * Math.PI * 2;
+        const distance = Math.random() * 100 + 50;
+        const destinationX = x + Math.cos(angle) * distance;
+        const destinationY = y + Math.sin(angle) * distance;
+        
+        const animation = particle.animate([
+            { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+            { transform: `translate(${destinationX - x}px, ${destinationY - y}px) scale(0)`, opacity: 0 }
+        ], {
+            duration: Math.random() * 1000 + 500,
+            easing: 'cubic-bezier(0, .9, .57, 1)'
+        });
+        
+        animation.onfinish = () => {
+            particle.remove();
+        };
+    }
 }
