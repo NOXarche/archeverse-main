@@ -87,20 +87,20 @@ function checkAdminRole(user) {
 }
 
     
-    // Update user info in the UI
-    function updateUserInfo(user, userData) {
-        const adminName = document.getElementById('admin-name');
-        const adminAvatar = document.getElementById('admin-avatar');
-        
-        adminName.textContent = userData.name || user.email;
-        
-        if (userData.photoURL) {
-            adminAvatar.src = userData.photoURL;
-        } else if (user.photoURL) {
-            adminAvatar.src = user.photoURL;
-        }
-    }
+   // Update user info in the UI
+function updateUserInfo(user, userData) {
+    const adminName = document.getElementById('admin-name');
+    const adminAvatar = document.getElementById('admin-avatar');
     
+    adminName.textContent = userData.name || user.email;
+    
+    if (userData.photoURL) {
+        adminAvatar.src = userData.photoURL;
+    } else if (user.photoURL) {
+        adminAvatar.src = user.photoURL;
+    }
+}
+
     // Theme toggle functionality
     function initThemeToggle() {
         const themeToggle = document.getElementById('theme-toggle');
