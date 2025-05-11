@@ -39,6 +39,12 @@
         </a>
     </div>
 
+    <!-- Current Date Display -->
+    <div class="current-date">
+        <i class="far fa-calendar-alt"></i>
+        <span id="current-date">Sunday, May 11, 2025</span>
+    </div>
+
     <!-- Main Header -->
     <header class="main-header">
         <div class="container">
@@ -84,13 +90,17 @@
                                 <span class="progress-text">6,500 / 10,000 XP</span>
                             </div>
                         </div>
+                        <div class="streak-counter">
+                            <i class="fas fa-fire"></i>
+                            <span id="current-streak">12 Day Streak</span>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="resource-panel" data-aos="fade-left">
                     <div class="resource-item growth-coins">
                         <div class="resource-icon">
-                            <img src="https://via.placeholder.com/40" alt="Growth Coin" class="coin-icon">
+                            <img src="https://drive.google.com/uc?export=view&id=15jMp8zin_5fPz1S3r8gju9Bt4SXjRbVJ" alt="Growth Coin" class="coin-icon">
                         </div>
                         <div class="resource-value" id="growth-coins">1,250</div>
                         <div class="resource-label">GROWTH</div>
@@ -180,6 +190,9 @@
                     <div class="panel-header">
                         <h2><i class="fas fa-tasks"></i> DAILY QUESTS</h2>
                         <div class="panel-actions">
+                            <button class="action-btn add-quest-btn" id="add-quest">
+                                <i class="fas fa-plus"></i>
+                            </button>
                             <button class="action-btn refresh-btn" id="refresh-quests">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
@@ -188,10 +201,6 @@
                     <div class="panel-content">
                         <div class="quest-list">
                             <div class="quest-item">
-                                <div class="quest-checkbox">
-                                    <input type="checkbox" id="quest1">
-                                    <label for="quest1"></label>
-                                </div>
                                 <div class="quest-info">
                                     <div class="quest-name">Code for 1 hour</div>
                                     <div class="quest-description">Complete a coding session</div>
@@ -200,12 +209,12 @@
                                     <div class="reward xp">+50 XP</div>
                                     <div class="reward coins">+10 ₲</div>
                                 </div>
+                                <button class="complete-btn">
+                                    <span>Complete</span>
+                                    <i class="fas fa-check"></i>
+                                </button>
                             </div>
                             <div class="quest-item">
-                                <div class="quest-checkbox">
-                                    <input type="checkbox" id="quest2">
-                                    <label for="quest2"></label>
-                                </div>
                                 <div class="quest-info">
                                     <div class="quest-name">Study GRE Vocabulary</div>
                                     <div class="quest-description">Learn 20 new words</div>
@@ -214,12 +223,12 @@
                                     <div class="reward xp">+30 XP</div>
                                     <div class="reward coins">+5 ₲</div>
                                 </div>
+                                <button class="complete-btn">
+                                    <span>Complete</span>
+                                    <i class="fas fa-check"></i>
+                                </button>
                             </div>
                             <div class="quest-item">
-                                <div class="quest-checkbox">
-                                    <input type="checkbox" id="quest3">
-                                    <label for="quest3"></label>
-                                </div>
                                 <div class="quest-info">
                                     <div class="quest-name">15-minute Workout</div>
                                     <div class="quest-description">Complete a quick exercise routine</div>
@@ -228,12 +237,12 @@
                                     <div class="reward xp">+20 XP</div>
                                     <div class="reward health">+5 ❤️</div>
                                 </div>
+                                <button class="complete-btn">
+                                    <span>Complete</span>
+                                    <i class="fas fa-check"></i>
+                                </button>
                             </div>
                             <div class="quest-item">
-                                <div class="quest-checkbox">
-                                    <input type="checkbox" id="quest4">
-                                    <label for="quest4"></label>
-                                </div>
                                 <div class="quest-info">
                                     <div class="quest-name">Read Technical Article</div>
                                     <div class="quest-description">Read and summarize one article</div>
@@ -242,12 +251,12 @@
                                     <div class="reward xp">+25 XP</div>
                                     <div class="reward coins">+8 ₲</div>
                                 </div>
+                                <button class="complete-btn">
+                                    <span>Complete</span>
+                                    <i class="fas fa-check"></i>
+                                </button>
                             </div>
                             <div class="quest-item">
-                                <div class="quest-checkbox">
-                                    <input type="checkbox" id="quest5">
-                                    <label for="quest5"></label>
-                                </div>
                                 <div class="quest-info">
                                     <div class="quest-name">Drink 2L Water</div>
                                     <div class="quest-description">Stay hydrated throughout the day</div>
@@ -256,6 +265,10 @@
                                     <div class="reward xp">+15 XP</div>
                                     <div class="reward health">+10 ❤️</div>
                                 </div>
+                                <button class="complete-btn">
+                                    <span>Complete</span>
+                                    <i class="fas fa-check"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -326,6 +339,82 @@
                                 <div class="challenge-rewards">
                                     <div class="reward xp">+100 XP</div>
                                     <div class="reward health">+25 ❤️</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Goals Section (New) -->
+                <section class="goals-section" data-aos="fade-up" data-aos-delay="250">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-flag-checkered"></i> PERSONAL GOALS</h2>
+                        <div class="panel-actions">
+                            <button class="action-btn add-goal-btn" id="add-goal">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="goals-list">
+                            <div class="goal-item">
+                                <div class="goal-header">
+                                    <div class="goal-title">Complete GRE Prep</div>
+                                    <div class="goal-deadline">Due: Jun 15, 2025</div>
+                                </div>
+                                <div class="goal-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 45%"></div>
+                                        <span class="progress-text">45%</span>
+                                    </div>
+                                </div>
+                                <div class="goal-milestones">
+                                    <div class="milestone completed">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Register for test</span>
+                                    </div>
+                                    <div class="milestone completed">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Complete practice test 1</span>
+                                    </div>
+                                    <div class="milestone">
+                                        <i class="far fa-circle"></i>
+                                        <span>Complete practice test 2</span>
+                                    </div>
+                                </div>
+                                <div class="goal-rewards">
+                                    <div class="reward xp">+500 XP</div>
+                                    <div class="reward coins">+100 ₲</div>
+                                </div>
+                            </div>
+                            <div class="goal-item">
+                                <div class="goal-header">
+                                    <div class="goal-title">Build Portfolio Website</div>
+                                    <div class="goal-deadline">Due: May 30, 2025</div>
+                                </div>
+                                <div class="goal-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 70%"></div>
+                                        <span class="progress-text">70%</span>
+                                    </div>
+                                </div>
+                                <div class="goal-milestones">
+                                    <div class="milestone completed">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Design mockups</span>
+                                    </div>
+                                    <div class="milestone completed">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Create HTML structure</span>
+                                    </div>
+                                    <div class="milestone">
+                                        <i class="far fa-circle"></i>
+                                        <span>Deploy website</span>
+                                    </div>
+                                </div>
+                                <div class="goal-rewards">
+                                    <div class="reward xp">+300 XP</div>
+                                    <div class="reward coins">+75 ₲</div>
                                 </div>
                             </div>
                         </div>
@@ -418,7 +507,7 @@
                         <h2><i class="fas fa-store"></i> GROWTH MARKET</h2>
                         <div class="panel-actions">
                             <div class="market-balance">
-                                <img src="https://via.placeholder.com/20" alt="Growth Coin" class="coin-icon-small">
+                                <img src="https://drive.google.com/uc?export=view&id=15jMp8zin_5fPz1S3r8gju9Bt4SXjRbVJ" alt="Growth Coin" class="coin-icon-small">
                                 <span id="market-coins">1,250</span>
                             </div>
                         </div>
@@ -434,7 +523,7 @@
                                     <div class="item-description">2h ad-blocked study session</div>
                                 </div>
                                 <div class="item-price">
-                                    <img src="https://via.placeholder.com/16" alt="Growth Coin" class="coin-icon-tiny">
+                                    <img src="https://drive.google.com/uc?export=view&id=15jMp8zin_5fPz1S3r8gju9Bt4SXjRbVJ" alt="Growth Coin" class="coin-icon-tiny">
                                     <span>50</span>
                                 </div>
                                 <button class="buy-btn">Purchase</button>
@@ -448,7 +537,7 @@
                                     <div class="item-description">Curated GATE DA prep materials</div>
                                 </div>
                                 <div class="item-price">
-                                    <img src="https://via.placeholder.com/16" alt="Growth Coin" class="coin-icon-tiny">
+                                    <img src="https://drive.google.com/uc?export=view&id=15jMp8zin_5fPz1S3r8gju9Bt4SXjRbVJ" alt="Growth Coin" class="coin-icon-tiny">
                                     <span>120</span>
                                 </div>
                                 <button class="buy-btn">Purchase</button>
@@ -463,7 +552,7 @@
                                     <div class="item-description">+50% efficiency for 1h</div>
                                 </div>
                                 <div class="item-price">
-                                    <img src="https://via.placeholder.com/16" alt="Growth Coin" class="coin-icon-tiny">
+                                    <img src="https://drive.google.com/uc?export=view&id=15jMp8zin_5fPz1S3r8gju9Bt4SXjRbVJ" alt="Growth Coin" class="coin-icon-tiny">
                                     <span>200</span>
                                 </div>
                                 <button class="buy-btn">Purchase</button>
@@ -477,10 +566,79 @@
                                     <div class="item-description">Unlock robotics tutorial</div>
                                 </div>
                                 <div class="item-price">
-                                    <img src="https://via.placeholder.com/16" alt="Growth Coin" class="coin-icon-tiny">
+                                    <img src="https://drive.google.com/uc?export=view&id=15jMp8zin_5fPz1S3r8gju9Bt4SXjRbVJ" alt="Growth Coin" class="coin-icon-tiny">
                                     <span>300</span>
                                 </div>
                                 <button class="buy-btn">Purchase</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Skill Tree (New) -->
+                <section class="skill-tree" data-aos="fade-up" data-aos-delay="450">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-project-diagram"></i> SKILL TREE</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="skill-tree-container">
+                            <div class="skill-category">
+                                <div class="category-name">Programming</div>
+                                <div class="skill-nodes">
+                                    <div class="skill-node unlocked">
+                                        <div class="node-icon">
+                                            <i class="fas fa-code"></i>
+                                        </div>
+                                        <div class="node-name">Basic Coding</div>
+                                    </div>
+                                    <div class="skill-node unlocked">
+                                        <div class="node-icon">
+                                            <i class="fab fa-python"></i>
+                                        </div>
+                                        <div class="node-name">Python</div>
+                                    </div>
+                                    <div class="skill-node">
+                                        <div class="node-icon">
+                                            <i class="fas fa-database"></i>
+                                        </div>
+                                        <div class="node-name">SQL</div>
+                                    </div>
+                                    <div class="skill-node locked">
+                                        <div class="node-icon">
+                                            <i class="fas fa-brain"></i>
+                                        </div>
+                                        <div class="node-name">Machine Learning</div>
+                                        <div class="node-lock">
+                                            <i class="fas fa-lock"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="skill-category">
+                                <div class="category-name">Engineering</div>
+                                <div class="skill-nodes">
+                                    <div class="skill-node unlocked">
+                                        <div class="node-icon">
+                                            <i class="fas fa-calculator"></i>
+                                        </div>
+                                        <div class="node-name">Mathematics</div>
+                                    </div>
+                                    <div class="skill-node">
+                                        <div class="node-icon">
+                                            <i class="fas fa-cogs"></i>
+                                        </div>
+                                        <div class="node-name">Systems Design</div>
+                                    </div>
+                                    <div class="skill-node locked">
+                                        <div class="node-icon">
+                                            <i class="fas fa-microchip"></i>
+                                        </div>
+                                        <div class="node-name">Hardware</div>
+                                        <div class="node-lock">
+                                            <i class="fas fa-lock"></i>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -553,7 +711,7 @@
                         <span>Stat Points: +5</span>
                     </div>
                     <div class="reward-item">
-                        <img src="https://via.placeholder.com/20" alt="Growth Coin" class="coin-icon-small">
+                        <img src="https://drive.google.com/uc?export=view&id=15jMp8zin_5fPz1S3r8gju9Bt4SXjRbVJ" alt="Growth Coin" class="coin-icon-small">
                         <span>GROWTH: +100</span>
                     </div>
                     <div class="reward-item">
@@ -581,11 +739,114 @@
                         <span>+50 XP</span>
                     </div>
                     <div class="reward-item">
-                        <img src="https://via.placeholder.com/20" alt="Growth Coin" class="coin-icon-small">
+                        <img src="https://drive.google.com/uc?export=view&id=15jMp8zin_5fPz1S3r8gju9Bt4SXjRbVJ" alt="Growth Coin" class="coin-icon-small">
                         <span>+10 GROWTH</span>
                     </div>
                 </div>
                 <button class="continue-btn">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Quest Modal -->
+    <div class="modal" id="add-quest-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Quest</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="new-quest-form">
+                    <div class="form-group">
+                        <label for="quest-name">Quest Name</label>
+                        <input type="text" id="quest-name" placeholder="Enter quest name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="quest-description">Description</label>
+                        <input type="text" id="quest-description" placeholder="Enter quest description" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rewards</label>
+                        <div class="rewards-inputs">
+                            <div class="reward-input">
+                                <label for="xp-reward">XP</label>
+                                <input type="number" id="xp-reward" min="0" value="20">
+                            </div>
+                            <div class="reward-input">
+                                <label for="coin-reward">GROWTH</label>
+                                <input type="number" id="coin-reward" min="0" value="5">
+                            </div>
+                            <div class="reward-input">
+                                <label for="health-reward">Health</label>
+                                <input type="number" id="health-reward" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="quest-category">Category</label>
+                        <select id="quest-category">
+                            <option value="study">Study</option>
+                            <option value="exercise">Exercise</option>
+                            <option value="coding">Coding</option>
+                            <option value="personal">Personal</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="save-btn">Add Quest</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Goal Modal -->
+    <div class="modal" id="add-goal-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Goal</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="new-goal-form">
+                    <div class="form-group">
+                        <label for="goal-title">Goal Title</label>
+                        <input type="text" id="goal-title" placeholder="Enter goal title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-deadline">Deadline</label>
+                        <input type="date" id="goal-deadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Milestones</label>
+                        <div class="milestones-container" id="milestones-container">
+                            <div class="milestone-input">
+                                <input type="text" placeholder="Enter milestone">
+                                <button type="button" class="remove-milestone"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                        <button type="button" class="add-milestone-btn">
+                            <i class="fas fa-plus"></i> Add Milestone
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Rewards</label>
+                        <div class="rewards-inputs">
+                            <div class="reward-input">
+                                <label for="goal-xp-reward">XP</label>
+                                <input type="number" id="goal-xp-reward" min="0" value="100">
+                            </div>
+                            <div class="reward-input">
+                                <label for="goal-coin-reward">GROWTH</label>
+                                <input type="number" id="goal-coin-reward" min="0" value="25">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="save-btn">Add Goal</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
