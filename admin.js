@@ -1701,7 +1701,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </td>
         `;
         
-        // Add event listeners for edit and delete buttons
+     // Add event listeners for edit and delete buttons
 const editBtn = row.querySelector('.edit-btn');
 const deleteBtn = row.querySelector('.delete-btn');
 
@@ -1758,3 +1758,4 @@ function deleteExperience(experienceId) {
             });
     }
 }
+
