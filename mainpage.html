@@ -110,6 +110,7 @@
                     <a href="#projects" class="nav-link"><i class="fas fa-rocket"></i> Projects</a>
                     <a href="#skills" class="nav-link"><i class="fas fa-tools"></i> Skills</a>
                     <a href="#experience" class="nav-link"><i class="fas fa-briefcase"></i> Experience</a>
+                    <a href="#design-showcase" class="nav-link"><i class="fas fa-palette"></i> Design</a>
                     <a href="#blog" class="nav-link"><i class="fas fa-pen"></i> Blog</a>
                     <a href="#linkedin" class="nav-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
                     <a href="auth.html" class="login-btn" id="login-btn"><i class="fas fa-lock"></i> VIP Login</a>
@@ -211,6 +212,10 @@
                         <div class="category-icon"><i class="fas fa-robot"></i></div>
                         <h3>Robotics</h3>
                     </div>
+                    <div class="skill-category" data-category="design">
+                        <div class="category-icon"><i class="fas fa-palette"></i></div>
+                        <h3>Design</h3>
+                    </div>
                 </div>
             </div>
             
@@ -219,6 +224,7 @@
                 <button class="filter-btn" data-filter="engineering">Engineering</button>
                 <button class="filter-btn" data-filter="data-science">Data Science</button>
                 <button class="filter-btn" data-filter="robotics">Robotics</button>
+                <button class="filter-btn" data-filter="design">Design</button>
             </div>
             <div class="skills-grid" id="skills-grid">
                 <!-- Skills will be loaded dynamically from Firebase -->
@@ -247,6 +253,35 @@
                         <p>Loading experience...</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Design Showcase Section -->
+    <section id="design-showcase" class="design-showcase-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Design Portfolio</h2>
+                <p>Showcasing creative work in Graphic Design, UI/UX, and AutoCAD</p>
+            </div>
+            
+            <div class="design-filter" data-aos="fade-up">
+                <button class="filter-btn active" data-filter="all">All Designs</button>
+                <button class="filter-btn" data-filter="Graphic Design">Graphic Design</button>
+                <button class="filter-btn" data-filter="UI/UX Design">UI/UX Design</button>
+                <button class="filter-btn" data-filter="AutoCAD">AutoCAD</button>
+            </div>
+            
+            <div class="design-showcase-grid" id="design-showcase-grid">
+                <!-- Design projects will be loaded dynamically from Firebase -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading design projects...</p>
+                </div>
+            </div>
+            
+            <div class="view-all-container" data-aos="fade-up">
+                <a href="#" class="view-all-btn">View Full Portfolio <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
@@ -373,6 +408,7 @@
                     <a href="#projects">Projects</a>
                     <a href="#skills">Skills</a>
                     <a href="#experience">Experience</a>
+                    <a href="#design-showcase">Design</a>
                     <a href="#blog">Blog</a>
                     <a href="#linkedin">LinkedIn</a>
                     <a href="#contact">Contact</a>
@@ -418,6 +454,21 @@
             <div class="ai-chat-input">
                 <input type="text" placeholder="Ask about our projects...">
                 <button><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design Viewer Modal -->
+    <div id="design-modal" class="design-modal">
+        <div class="design-modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="design-modal-body">
+                <img id="design-modal-image" src="" alt="Design Preview">
+                <div class="design-modal-info">
+                    <h3 id="design-modal-title"></h3>
+                    <p id="design-modal-description"></p>
+                    <div id="design-modal-tools" class="design-tools"></div>
+                </div>
             </div>
         </div>
     </div>
