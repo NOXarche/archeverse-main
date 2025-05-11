@@ -15,11 +15,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     
+    // Add console logs for debugging
+    console.log("Firebase initialized");
+    
     // Check authentication
     checkAuth();
     
     // Initialize components after auth check
     function initializeAdmin() {
+        console.log("Initializing admin interface");
         // Hide auth overlay
         document.getElementById('auth-check').style.display = 'none';
         
@@ -46,53 +50,55 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Authentication check
     function checkAuth() {
+        console.log("Checking authentication");
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
+                console.log("User is signed in:", user.email);
                 // User is signed in, check if admin
                 checkAdminRole(user);
             } else {
+                console.log("No user is signed in");
                 // No user is signed in, redirect to login
                 window.location.href = 'auth.html';
             }
         });
     }
     
-// Check if user has admin role
-function checkAdminRole(user) {
-    console.log("Checking admin role for user:", user.uid);
-    
-    const db = firebase.firestore();
-    db.collection('users').doc(user.uid).get()
-        .then((doc) => {
-            console.log("User document:", doc.exists ? "exists" : "does not exist");
-            if (doc.exists) {
-                console.log("User data:", doc.data());
-                console.log("isAdmin value:", doc.data().isAdmin);
-                
-                if (doc.data().isAdmin === true) {
-                    // User is admin, update UI with user info
-                    console.log("User is admin, initializing admin interface");
-                    updateUserInfo(user, doc.data());
-                    initializeAdmin();
+    // Check if user has admin role - UPDATED to use isAdmin field
+    function checkAdminRole(user) {
+        console.log("Checking admin role for user:", user.uid);
+        
+        const db = firebase.firestore();
+        db.collection('users').doc(user.uid).get()
+            .then((doc) => {
+                console.log("User document:", doc.exists ? "exists" : "does not exist");
+                if (doc.exists) {
+                    console.log("User data:", doc.data());
+                    console.log("isAdmin value:", doc.data().isAdmin);
+                    
+                    if (doc.data().isAdmin === true) {
+                        // User is admin, update UI with user info
+                        console.log("User is admin, initializing admin interface");
+                        updateUserInfo(user, doc.data());
+                        initializeAdmin();
+                    } else {
+                        // Not an admin, redirect to main page
+                        console.log("User is not admin, redirecting");
+                        alert('You do not have admin privileges.');
+                        window.location.href = 'index.html';
+                    }
                 } else {
-                    // Not an admin, redirect to main page
-                    console.log("User is not admin, redirecting");
-                    alert('You do not have admin privileges.');
+                    console.log("User document does not exist");
+                    alert('User profile not found.');
                     window.location.href = 'index.html';
                 }
-            } else {
-                console.log("User document does not exist");
-                alert('User profile not found.');
+            })
+            .catch((error) => {
+                console.error("Error checking admin role:", error);
+                alert('Authentication error: ' + error.message);
                 window.location.href = 'index.html';
-            }
-        })
-        .catch((error) => {
-            console.error("Error checking admin role:", error);
-            alert('Authentication error: ' + error.message);
-            window.location.href = 'index.html';
-        });
-}
-
+            });
+    }
     
     // Update user info in the UI
     function updateUserInfo(user, userData) {
@@ -1693,84 +1699,58 @@ function checkAdminRole(user) {
     function createExperienceRow(experience) {
         const row = document.createElement('tr');
         
-        // Format dates
-        const startDate = new Date(experience.startDate);
-        const endDate = experience.endDate ? new Date(experience.endDate) : null;
-        
-        const formatDate = (date) => {
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
-        };
-        
-        const period = endDate ? `${formatDate(startDate)} - ${formatDate(endDate)}` : `${formatDate(startDate)} - Present`;
-        
-        row.innerHTML = `
-            <td>${experience.title}</td>
-            <td>${experience.organization}</td>
-            <td>${period}</td>
-            <td>${experience.type.charAt(0).toUpperCase() + experience.type.slice(1)}</td>
-            <td>
-                <div class="table-actions">
-                    <button class="action-btn edit-btn" data-id="${experience.id}"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn delete-btn" data-id="${experience.id}"><i class="fas fa-trash"></i></button>
-                </div>
-            </td>
-        `;
-        
-      // Add event listeners for edit and delete buttons
-const editBtn = row.querySelector('.edit-btn');
-const deleteBtn = row.querySelector('.delete-btn');
-
-editBtn.addEventListener('click', function() {
-    editExperience(experience);
-});
-
-deleteBtn.addEventListener('click', function() {
-    deleteExperience(experience.id);
-});
-
-// Edit experience function
-function editExperience(experience) {
-    openModal('experience', experience);
+       // Format date with various options
+function formatDate(date, format = 'default') {
+    if (!date) return '';
     
-    // Format dates for the date inputs
-    if (experience.startDate) {
-        const startDate = new Date(experience.startDate);
-        document.getElementById('experience-start-date').value = startDate.toISOString().split('T')[0];
-    }
+    const d = new Date(date);
     
-    if (experience.endDate) {
-        const endDate = new Date(experience.endDate);
-        document.getElementById('experience-end-date').value = endDate.toISOString().split('T')[0];
-    }
+    // Check if date is valid
+    if (isNaN(d.getTime())) return 'Invalid date';
     
-    // Handle tags array
-    if (experience.tags && Array.isArray(experience.tags)) {
-        document.getElementById('experience-tags').value = experience.tags.join(', ');
-    }
-}
-
-// Delete experience function
-function deleteExperience(experienceId) {
-    if (confirm('Are you sure you want to delete this experience? This action cannot be undone.')) {
-        const db = firebase.database();
-        
-        db.ref(`experience/${experienceId}`).remove()
-            .then(() => {
-                // Log activity
-                logActivity('delete', 'Experience Deleted', 'An experience entry was deleted from the database.');
-                
-                // Reload experience entries
-                loadExperience();
-                
-                // Update experience count if needed
-                fetchExperienceCount();
-                
-                alert('Experience deleted successfully!');
-            })
-            .catch((error) => {
-                console.error("Error deleting experience:", error);
-                alert('Error deleting experience. Please try again.');
-            });
+    // Different format options
+    switch (format) {
+        case 'short':
+            // Format: MM/DD/YY
+            return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear().toString().substr(-2)}`;
+            
+        case 'long':
+            // Format: Month DD, YYYY
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+            return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+            
+        case 'relative':
+            // Format: X time ago (e.g., "2 hours ago", "3 days ago")
+            return getTimeAgo(d);
+            
+        case 'datetime':
+            // Format: MM/DD/YYYY HH:MM AM/PM
+            let hours = d.getHours();
+            const minutes = d.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+            return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()} ${hours}:${minutesStr} ${ampm}`;
+            
+        case 'iso':
+            // Format: YYYY-MM-DD
+            return d.toISOString().split('T')[0];
+            
+        case 'time':
+            // Format: HH:MM AM/PM
+            let hrs = d.getHours();
+            const mins = d.getMinutes();
+            const amOrPm = hrs >= 12 ? 'PM' : 'AM';
+            hrs = hrs % 12;
+            hrs = hrs ? hrs : 12;
+            const minsStr = mins < 10 ? '0' + mins : mins;
+            return `${hrs}:${minsStr} ${amOrPm}`;
+            
+        default:
+            // Default format: MM/DD/YYYY
+            return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
     }
 }
 
