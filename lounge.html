@@ -214,84 +214,621 @@
                     </div>
                 </section>
 
-                <!-- Upload Modal -->
-                <div id="upload-modal" class="modal">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 id="modal-title">Add New Project</h3>
-                            <button class="close-modal">&times;</button>
+                <!-- Skills Section -->
+                <section id="skills-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Skills Management</h2>
+                        <button class="add-new-btn" id="add-skill-btn">
+                            <i class="fas fa-plus"></i> Add New Skill
+                        </button>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>All Skills</h3>
+                            <div class="card-actions">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" placeholder="Search skills...">
+                                </div>
+                                <select class="filter-select">
+                                    <option value="all">All Categories</option>
+                                    <option value="engineering">Engineering</option>
+                                    <option value="data-science">Data Science</option>
+                                    <option value="robotics">Robotics</option>
+                                    <option value="design">Design</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <form id="upload-form">
-                                <div class="form-group">
-                                    <label for="project-title">Title</label>
-                                    <input type="text" id="project-title" name="title" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-description">Description</label>
-                                    <textarea id="project-description" name="description" rows="4" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-status">Status</label>
-                                    <select id="project-status" name="status" required>
-                                        <option value="live">Live</option>
-                                        <option value="development">In Development</option>
-                                        <option value="planned">Planned</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-technologies">Technologies (comma separated)</label>
-                                    <input type="text" id="project-technologies" name="technologies" placeholder="React, Firebase, Three.js">
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-github">GitHub URL (optional)</label>
-                                    <input type="url" id="project-github" name="githubUrl" placeholder="https://github.com/username/repo">
-                                </div>
-                                <div class="form-group">
-                                    <label for="project-details">Details URL (optional)</label>
-                                    <input type="url" id="project-details" name="detailsUrl" placeholder="https://example.com/project-details">
-                                </div>
-                                
-                                <div class="upload-options">
-                                    <div class="upload-option-tabs">
-                                        <button type="button" class="upload-tab active" data-tab="file">Upload File</button>
-                                        <button type="button" class="upload-tab" data-tab="url">Image URL</button>
-                                    </div>
-                                    
-                                    <div class="upload-tab-content active" id="file-upload">
-                                        <div class="dropzone" id="image-dropzone">
-                                            <i class="fas fa-cloud-upload-alt"></i>
-                                            <p>Drag & drop an image here or click to browse</p>
-                                            <input type="file" id="file-input" accept="image/*" hidden>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="upload-tab-content" id="url-upload">
-                                        <div class="form-group">
-                                            <label for="image-url">Image URL</label>
-                                            <input type="url" id="image-url" name="imageUrl" placeholder="https://example.com/image.jpg">
-                                        </div>
-                                        <button type="button" id="fetch-url-btn" class="secondary-btn">
-                                            <i class="fas fa-download"></i> Fetch & Preview
-                                        </button>
-                                    </div>
-                                    
-                                    <div class="image-preview-container">
-                                        <img id="image-preview" src="" alt="Preview" style="display: none;">
-                                    </div>
-                                </div>
-                                
-                                <div class="form-actions">
-                                    <button type="button" class="cancel-btn">Cancel</button>
-                                    <button type="submit" class="submit-btn">
-                                        <i class="fas fa-save"></i> Save Project
-                                    </button>
-                                </div>
-                            </form>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Skill Name</th>
+                                        <th>Category</th>
+                                        <th>Proficiency</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="skills-table-body">
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="loading-spinner">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                <p>Loading skills...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                <!-- Blog Posts Section -->
+                <section id="blog-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Blog Posts Management</h2>
+                        <button class="add-new-btn" id="add-blog-btn">
+                            <i class="fas fa-plus"></i> Add New Post
+                        </button>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>All Blog Posts</h3>
+                            <div class="card-actions">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" placeholder="Search posts...">
+                                </div>
+                                <select class="filter-select">
+                                    <option value="all">All Categories</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Design">Design</option>
+                                    <option value="AI">AI</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Category</th>
+                                        <th>Published Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="blog-table-body">
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="loading-spinner">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                <p>Loading blog posts...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Design Portfolio Section -->
+                <section id="design-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Design Portfolio Management</h2>
+                        <button class="add-new-btn" id="add-design-btn">
+                            <i class="fas fa-plus"></i> Add New Design
+                        </button>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>All Design Projects</h3>
+                            <div class="card-actions">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" placeholder="Search designs...">
+                                </div>
+                                <select class="filter-select">
+                                    <option value="all">All Categories</option>
+                                    <option value="Graphic Design">Graphic Design</option>
+                                    <option value="UI/UX Design">UI/UX Design</option>
+                                    <option value="AutoCAD">AutoCAD</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Category</th>
+                                        <th>Created Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="design-table-body">
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="loading-spinner">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                <p>Loading design projects...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Experience Section -->
+                <section id="experience-section" class="content-section">
+                    <div class="section-header">
+                        <h2>Experience Management</h2>
+                        <button class="add-new-btn" id="add-experience-btn">
+                            <i class="fas fa-plus"></i> Add New Experience
+                        </button>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>All Experience Entries</h3>
+                            <div class="card-actions">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" placeholder="Search experience...">
+                                </div>
+                                <select class="filter-select">
+                                    <option value="all">All Types</option>
+                                    <option value="work">Work</option>
+                                    <option value="education">Education</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Organization</th>
+                                        <th>Period</th>
+                                        <th>Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="experience-table-body">
+                                    <tr>
+                                        <td colspan="5">
+                                            <div class="loading-spinner">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                <p>Loading experience entries...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- User Management Section -->
+                <section id="users-section" class="content-section">
+                    <div class="section-header">
+                        <h2>User Management</h2>
+                        <button class="add-new-btn" id="add-user-btn">
+                            <i class="fas fa-plus"></i> Add New User
+                        </button>
+                    </div>
+                    
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3>All Users</h3>
+                            <div class="card-actions">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" placeholder="Search users...">
+                                </div>
+                                <select class="filter-select">
+                                    <option value="all">All Roles</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="user">User</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Created Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <tr>
+                                        <td colspan="5">
+                                            <div class="loading-spinner">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                                <p>Loading users...</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
             </main>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Add New Project</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="upload-form">
+                    <div class="form-group">
+                        <label for="project-title">Title</label>
+                        <input type="text" id="project-title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-description">Description</label>
+                        <textarea id="project-description" name="description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-status">Status</label>
+                        <select id="project-status" name="status" required>
+                            <option value="live">Live</option>
+                            <option value="development">In Development</option>
+                            <option value="planned">Planned</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-technologies">Technologies (comma separated)</label>
+                        <input type="text" id="project-technologies" name="technologies" placeholder="React, Firebase, Three.js">
+                    </div>
+                    <div class="form-group">
+                        <label for="project-github">GitHub URL (optional)</label>
+                        <input type="url" id="project-github" name="githubUrl" placeholder="https://github.com/username/repo">
+                    </div>
+                    <div class="form-group">
+                        <label for="project-details">Details URL (optional)</label>
+                        <input type="url" id="project-details" name="detailsUrl" placeholder="https://example.com/project-details">
+                    </div>
+                    
+                    <div class="upload-options">
+                        <div class="upload-option-tabs">
+                            <button type="button" class="upload-tab active" data-tab="file">Upload File</button>
+                            <button type="button" class="upload-tab" data-tab="url">Image URL</button>
+                        </div>
+                        
+                        <div class="upload-tab-content active" id="file-upload">
+                            <div class="dropzone" id="image-dropzone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & drop an image here or click to browse</p>
+                                <input type="file" id="file-input" accept="image/*" hidden>
+                            </div>
+                        </div>
+                        
+                        <div class="upload-tab-content" id="url-upload">
+                            <div class="form-group">
+                                <label for="image-url">Image URL</label>
+                                <input type="url" id="image-url" name="imageUrl" placeholder="https://example.com/image.jpg">
+                            </div>
+                            <button type="button" id="fetch-url-btn" class="secondary-btn">
+                                <i class="fas fa-download"></i> Fetch & Preview
+                            </button>
+                        </div>
+                        
+                        <div class="image-preview-container">
+                            <img id="image-preview" src="" alt="Preview" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save Project
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Modal -->
+    <div id="skills-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="skills-modal-title">Add New Skill</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="skills-form">
+                    <div class="form-group">
+                        <label for="skill-name">Skill Name</label>
+                        <input type="text" id="skill-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="skill-category">Category</label>
+                        <select id="skill-category" name="category" required>
+                            <option value="engineering">Engineering</option>
+                            <option value="data-science">Data Science</option>
+                            <option value="robotics">Robotics</option>
+                            <option value="design">Design</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="skill-proficiency">Proficiency (1-5)</label>
+                        <input type="range" id="skill-proficiency" name="proficiency" min="1" max="5" value="3" required>
+                        <div class="range-value"><span id="proficiency-value">3</span>/5</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="skill-description">Description</label>
+                        <textarea id="skill-description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="skill-years">Years of Experience</label>
+                        <input type="number" id="skill-years" name="years" min="0" step="0.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="skill-icon">Icon (Font Awesome class)</label>
+                        <input type="text" id="skill-icon" name="icon" placeholder="fas fa-code">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save Skill
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Post Modal -->
+    <div id="blog-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="blog-modal-title">Add New Blog Post</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="blog-form">
+                    <div class="form-group">
+                        <label for="blog-title">Title</label>
+                        <input type="text" id="blog-title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="blog-category">Category</label>
+                        <select id="blog-category" name="category" required>
+                            <option value="Technology">Technology</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Design">Design</option>
+                            <option value="AI">AI</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="blog-summary">Summary</label>
+                        <textarea id="blog-summary" name="summary" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="blog-content">Content</label>
+                        <textarea id="blog-content" name="content" rows="10" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="blog-read-time">Read Time (minutes)</label>
+                        <input type="number" id="blog-read-time" name="readTime" min="1" required>
+                    </div>
+                    
+                    <div class="upload-options">
+                        <div class="upload-option-tabs">
+                            <button type="button" class="upload-tab active" data-tab="file">Upload Cover Image</button>
+                            <button type="button" class="upload-tab" data-tab="url">Image URL</button>
+                        </div>
+                        
+                        <div class="upload-tab-content active" id="blog-file-upload">
+                            <div class="dropzone" id="blog-image-dropzone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & drop an image here or click to browse</p>
+                                <input type="file" id="blog-file-input" accept="image/*" hidden>
+                            </div>
+                        </div>
+                        
+                        <div class="upload-tab-content" id="blog-url-upload">
+                            <div class="form-group">
+                                <label for="blog-image-url">Image URL</label>
+                                <input type="url" id="blog-image-url" name="imageUrl" placeholder="https://example.com/image.jpg">
+                            </div>
+                            <button type="button" id="blog-fetch-url-btn" class="secondary-btn">
+                                <i class="fas fa-download"></i> Fetch & Preview
+                            </button>
+                        </div>
+                        
+                        <div class="image-preview-container">
+                            <img id="blog-image-preview" src="" alt="Preview" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save Blog Post
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Experience Modal -->
+    <div id="experience-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="experience-modal-title">Add New Experience</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="experience-form">
+                    <div class="form-group">
+                        <label for="experience-title">Title</label>
+                        <input type="text" id="experience-title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="experience-organization">Organization</label>
+                        <input type="text" id="experience-organization" name="organization" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="experience-type">Type</label>
+                        <select id="experience-type" name="type" required>
+                            <option value="work">Work</option>
+                            <option value="education">Education</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="experience-start-date">Start Date</label>
+                        <input type="date" id="experience-start-date" name="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="experience-end-date">End Date (leave empty for current)</label>
+                        <input type="date" id="experience-end-date" name="endDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="experience-description">Description</label>
+                        <textarea id="experience-description" name="description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="experience-tags">Tags (comma separated)</label>
+                        <input type="text" id="experience-tags" name="tags" placeholder="Project Management, Team Leadership">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save Experience
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design Portfolio Modal -->
+    <div id="design-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="design-modal-title">Add New Design</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="design-form">
+                    <div class="form-group">
+                        <label for="design-title">Title</label>
+                        <input type="text" id="design-title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="design-category">Category</label>
+                        <select id="design-category" name="category" required>
+                            <option value="Graphic Design">Graphic Design</option>
+                            <option value="UI/UX Design">UI/UX Design</option>
+                            <option value="AutoCAD">AutoCAD</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="design-description">Description</label>
+                        <textarea id="design-description" name="description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="design-tools">Tools Used (comma separated)</label>
+                        <input type="text" id="design-tools" name="tools" placeholder="Photoshop, Illustrator, Figma">
+                    </div>
+                    
+                    <div class="upload-options">
+                        <div class="upload-option-tabs">
+                            <button type="button" class="upload-tab active" data-tab="file">Upload Design Image</button>
+                            <button type="button" class="upload-tab" data-tab="url">Image URL</button>
+                        </div>
+                        
+                        <div class="upload-tab-content active" id="design-file-upload">
+                            <div class="dropzone" id="design-image-dropzone">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & drop an image here or click to browse</p>
+                                <input type="file" id="design-file-input" accept="image/*" hidden>
+                            </div>
+                        </div>
+                        
+                        <div class="upload-tab-content" id="design-url-upload">
+                            <div class="form-group">
+                                <label for="design-image-url">Image URL</label>
+                                <input type="url" id="design-image-url" name="imageUrl" placeholder="https://example.com/image.jpg">
+                            </div>
+                            <button type="button" id="design-fetch-url-btn" class="secondary-btn">
+                                <i class="fas fa-download"></i> Fetch & Preview
+                            </button>
+                        </div>
+                        
+                        <div class="image-preview-container">
+                            <img id="design-image-preview" src="" alt="Preview" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save Design
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="user-modal-title">Add New User</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="user-form">
+                    <div class="form-group">
+                        <label for="user-name">Name</label>
+                        <input type="text" id="user-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-email">Email</label>
+                        <input type="email" id="user-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-password">Password (for new users only)</label>
+                        <input type="password" id="user-password" name="password">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-role">Admin Access</label>
+                        <select id="user-role" name="role" required>
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save"></i> Save User
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
