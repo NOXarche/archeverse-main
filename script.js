@@ -1,72 +1,155 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Typewriter effect for title
-    const title = document.querySelector('.title');
-    title.style.width = '0';
+    // Initialize visitor counter
+    let visitorCount = localStorage.getItem('visitorCount') || 0;
+    visitorCount = parseInt(visitorCount) + 1;
+    localStorage.setItem('visitorCount', visitorCount);
     
-    // Animate ODM wires on mouse move
-    const heroSection = document.querySelector('.hero-section');
-    const leftWire = document.querySelector('.left-wire');
-    const rightWire = document.querySelector('.right-wire');
-    
-    heroSection.addEventListener('mousemove', (e) => {
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-        
-        leftWire.style.transform = `rotate(${-40 + x * 20}deg) scaleY(${0.9 + y * 0.2})`;
-        rightWire.style.transform = `rotate(${40 - x * 20}deg) scaleY(${0.9 + y * 0.2})`;
-    });
+    // Display visitor count with animation
+    const counterElement = document.getElementById('visitor-count');
+    let currentCount = 0;
+    const interval = setInterval(() => {
+        if (currentCount < visitorCount) {
+            currentCount++;
+            counterElement.textContent = currentCount;
+            // Optional: Add bone cracking sound effect here
+        } else {
+            clearInterval(interval);
+        }
+    }, 100);
     
     // CTA button effect
     const ctaButton = document.querySelector('.cta-button');
     ctaButton.addEventListener('click', () => {
         // Add your navigation logic here
-        console.log('Entering the walls...');
+        console.log('Joining the expedition...');
         // Example: window.location.href = 'main.html';
+        
+        // Wall Maria Gate Transition animation could go here
+        document.body.classList.add('gate-opening');
+        setTimeout(() => {
+            // Navigate after animation completes
+            // window.location.href = 'main.html';
+        }, 2000);
     });
     
-    // Animate stat bars when they come into view
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const statFills = document.querySelectorAll('.stat-fill');
-                statFills.forEach(fill => {
-                    const width = fill.style.width;
-                    fill.style.width = '0';
-                    setTimeout(() => {
-                        fill.style.width = width;
-                    }, 200);
-                });
-                observer.unobserve(entry.target);
+    // Titan eye glow on scroll
+    window.addEventListener('scroll', () => {
+        const scrollPosition = window.scrollY;
+        const heroHeight = document.querySelector('.hero-section').offsetHeight;
+        
+        if (scrollPosition > heroHeight * 0.7) {
+            // Create titan eyes if they don't exist
+            if (!document.querySelector('.titan-eyes')) {
+                const titanEyes = document.createElement('div');
+                titanEyes.classList.add('titan-eyes');
+                
+                const leftEye = document.createElement('div');
+                leftEye.classList.add('titan-eye', 'left-eye');
+                
+                const rightEye = document.createElement('div');
+                rightEye.classList.add('titan-eye', 'right-eye');
+                
+                titanEyes.appendChild(leftEye);
+                titanEyes.appendChild(rightEye);
+                
+                document.querySelector('.hero-section').appendChild(titanEyes);
+                
+                // Optional: Add Titan roar sound effect here
+                setTimeout(() => {
+                    titanEyes.classList.add('active');
+                }, 100);
             }
-        });
-    }, { threshold: 0.5 });
+        }
+    });
     
-    const dossierStats = document.querySelector('.dossier-stats');
-    if (dossierStats) {
-        observer.observe(dossierStats);
+    // Scout Regiment Logo Easter Egg
+    let logoClickCount = 0;
+    const scoutLogo = document.querySelector('.scout-logo');
+    
+    scoutLogo.addEventListener('click', () => {
+        logoClickCount++;
+        
+        if (logoClickCount === 3) {
+            // Play "Sasageyo!" or display a message
+            alert('SASAGEYO! SHINZOU WO SASAGEYO!');
+            logoClickCount = 0;
+        }
+    });
+    
+    // Add ODM gear zipping sound on button hovers
+    const buttons = document.querySelectorAll('button, .nav-item, .social-link');
+    
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', () => {
+            // Optional: Play ODM gear zipping sound
+            playZipSound();
+        });
+    });
+    
+    // Function to simulate ODM gear zipping sound
+    function playZipSound() {
+        // This is just a placeholder. In a real implementation,
+        // you would use the Web Audio API or a library like Howler.js
+        console.log('Zip sound played');
     }
     
-    // Add dynamic wall texture to hero section
-    function createWallTexture() {
-        const heroSection = document.querySelector('.hero-section');
-        const texture = document.createElement('div');
-        texture.classList.add('wall-texture');
-        
-        // Create a grid of small divs to simulate wall stones
-        for (let i = 0; i < 100; i++) {
-            const stone = document.createElement('div');
-            stone.classList.add('wall-stone');
-            stone.style.left = `${Math.random() * 100}%`;
-            stone.style.top = `${Math.random() * 100}%`;
-            stone.style.width = `${Math.random() * 30 + 10}px`;
-            stone.style.height = `${Math.random() * 20 + 5}px`;
-            stone.style.backgroundColor = `rgba(${30 + Math.random() * 20}, ${30 + Math.random() * 20}, ${30 + Math.random() * 20}, 0.5)`;
-            texture.appendChild(stone);
+    // Mobile navigation toggle
+    const navLogo = document.querySelector('.nav-logo');
+    const navItems = document.querySelector('.nav-items');
+    
+    navLogo.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            navItems.style.display = navItems.style.display === 'flex' ? 'none' : 'flex';
+        }
+    });
+    
+    // Resize handler for navigation
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            navItems.style.display = 'flex';
+        } else {
+            navItems.style.display = 'none';
+        }
+    });
+    
+    // Add CSS for Titan eyes (dynamically added on scroll)
+    const style = document.createElement('style');
+    style.textContent = `
+        .titan-eyes {
+            position: absolute;
+            bottom: 10%;
+            right: 10%;
+            display: flex;
+            gap: 20px;
+            opacity: 0;
+            transition: opacity 1s ease;
         }
         
-        heroSection.appendChild(texture);
-    }
-    
-    // Uncomment the line below if you want to add dynamic wall texture
-    // createWallTexture();
+        .titan-eyes.active {
+            opacity: 1;
+        }
+        
+        .titan-eye {
+            width: 30px;
+            height: 15px;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(163, 22, 33, 1) 0%,
+                rgba(163, 22, 33, 0.7) 40%,
+                rgba(163, 22, 33, 0) 70%
+            );
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(163, 22, 33, 0.8);
+        }
+        
+        .gate-opening {
+            animation: gateOpen 2s forwards;
+        }
+        
+        @keyframes gateOpen {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
 });
