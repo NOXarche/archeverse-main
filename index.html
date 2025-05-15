@@ -3,113 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scout Regiment Portfolio</title>
+    <title>Sanctum Sanctorum | Your Name</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
 </head>
 <body>
-    <div class="landing-page">
-        <!-- Hero Section (The Call to Adventure) -->
-        <div class="hero-section">
-            <div class="titan-shadow"></div>
-            <div class="lanterns">
-                <div class="lantern lantern-1"></div>
-                <div class="lantern lantern-2"></div>
-                <div class="lantern lantern-3"></div>
+    <!-- Navigation Bar (Cloak of Levitation Style) -->
+    <nav class="mystic-nav">
+        <div class="nav-logo">
+            <div class="eye-of-agamotto">
+                <span class="visitor-count">0</span>
             </div>
-            
-            <div class="scout-logo-container">
-                <svg class="scout-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="32" cy="32" r="30" stroke="#1e3d1e" stroke-width="4" fill="none"/>
-                    <path fill="#a31621" d="M32 10 L42 54 L32 42 L22 54 Z" />
-                </svg>
-            </div>
-            
-            <h1 class="headline">Dedicate Your Heart!</h1>
-            <p class="subtext">A Soldier's Journey Through Code, Design & Engineering</p>
-            
-            <button class="cta-button">
-                <span>Join the Expedition</span>
-                <div class="odm-wire-left"></div>
-                <div class="odm-wire-right"></div>
-            </button>
         </div>
+        <ul class="nav-links">
+            <li><a href="#projects">Spellbook</a></li>
+            <li><a href="#skills">Artifacts</a></li>
+            <li><a href="#experience">Dimensions</a></li>
+            <li><a href="#contact">Sanctum</a></li>
+        </ul>
+    </nav>
 
-        <!-- Navigation Bar (Scout Regiment ODM Gear UI) -->
-        <nav class="scout-nav">
-            <div class="nav-logo">
-                <svg class="nav-scout-logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="32" cy="32" r="30" stroke="#5a5a5a" stroke-width="4" fill="none"/>
-                    <path fill="#5a5a5a" d="M32 10 L42 54 L32 42 L22 54 Z" />
-                </svg>
-            </div>
-            <ul class="nav-items">
-                <li class="nav-item"><span class="nav-text">Mission Log</span><div class="blade-slash"></div></li>
-                <li class="nav-item"><span class="nav-text">Training</span><div class="blade-slash"></div></li>
-                <li class="nav-item"><span class="nav-text">Expeditions</span><div class="blade-slash"></div></li>
-                <li class="nav-item"><span class="nav-text">Intel</span><div class="blade-slash"></div></li>
-            </ul>
-        </nav>
+    <!-- Hero Section - The Mystic Portal -->
+    <section class="hero-portal">
+        <div class="portal-rings" id="portalCanvas"></div>
+        <div class="hero-content">
+            <h1 class="spell-text">By the Vishanti... Welcome to My Arcane Archive.</h1>
+            <p class="hero-subtext">Reality-bending CP, Web Dev & Design – Just a Sling Ring away.</p>
+            <div class="name-reveal">Your Name</div>
+            <button class="cta-button">Enter the Portal</button>
+        </div>
+    </section>
 
-        <!-- Brief Intro (Soldier's Dossier) -->
-        <section class="intro-section">
-            <div class="dossier">
-                <div class="dossier-header">
-                    <h2>SCOUT REGIMENT DOSSIER</h2>
-                    <div class="dossier-stamp"></div>
-                </div>
-                <div class="dossier-content">
-                    <p class="dossier-text typewriter">
-                        Cadet [Your Name], 104th Training Corps. Specializes in:
-                    </p>
-                    <ul class="specialties">
-                        <li><span class="specialty-name">Swordplay</span> (Competitive Programming)</li>
-                        <li><span class="specialty-name">Tactics</span> (Data Structures & Algorithms)</li>
-                        <li><span class="specialty-name">Engineering</span> (Web Dev & CAD)</li>
-                        <li><span class="specialty-name">Scouting</span> (Design & Robotics)</li>
+    <!-- Brief Intro (The Book of Cagliostro) -->
+    <section class="book-section">
+        <div class="floating-book">
+            <div class="book-cover"></div>
+            <div class="book-pages">
+                <div class="book-content">
+                    <h2>Wielder of:</h2>
+                    <ul class="infinity-stones">
+                        <li class="time-stone">Time Stone (DSA & CP)</li>
+                        <li class="reality-stone">Reality Stone (Web Dev)</li>
+                        <li class="mind-stone">Mind Stone (Design & CAD)</li>
+                        <li class="space-stone">Space Stone (Robotics)</li>
                     </ul>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Visitor Counter (Titan Tally) -->
-        <section class="counter-section">
-            <div class="titan-counter">
-                <h3>TITAN SIGHTINGS</h3>
-                <div class="counter-display">
-                    <span id="visitor-count">0</span>
-                </div>
-                <p class="counter-label">Visitors to our territory</p>
-            </div>
-        </section>
+    <!-- Social Links (Sling Ring Portals) -->
+    <section class="social-portals">
+        <a href="#" class="portal-link linkedin">
+            <div class="portal-circle"></div>
+            <span>LinkedIn</span>
+        </a>
+        <a href="#" class="portal-link github">
+            <div class="portal-circle"></div>
+            <span>GitHub</span>
+        </a>
+        <a href="#" class="portal-link twitter">
+            <div class="portal-circle"></div>
+            <span>Twitter</span>
+        </a>
+    </section>
 
-        <!-- Social Links (Scout Regiment Network) -->
-        <section class="social-section">
-            <h3>ALLIED REGIMENTS</h3>
-            <div class="social-links">
-                <a href="#" class="social-link linkedin">
-                    <i class="fab fa-linkedin"></i>
-                    <div class="flare-smoke"></div>
-                </a>
-                <a href="#" class="social-link github">
-                    <i class="fab fa-github"></i>
-                    <div class="flare-smoke"></div>
-                </a>
-                <a href="#" class="social-link twitter">
-                    <i class="fab fa-twitter"></i>
-                    <div class="flare-smoke"></div>
-                </a>
-            </div>
-        </section>
+    <!-- Footer (The Ancient One's Quote) -->
+    <footer class="mystic-footer">
+        <div class="mandala-pattern"></div>
+        <p class="ancient-quote">"We never lose our demons. We only learn to live above them."</p>
+    </footer>
 
-        <!-- Footer (Oath of the Scouts) -->
-        <footer class="footer">
-            <div class="candle-light"></div>
-            <p class="oath">I swear to dedicate my heart to the pursuit of knowledge, innovation, and humanity's advancement.</p>
-            <div class="candle-light"></div>
-        </footer>
-    </div>
-
+    <div class="custom-cursor"></div>
     <script src="script.js"></script>
 </body>
 </html>
